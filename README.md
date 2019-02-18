@@ -16,4 +16,15 @@ The framework itself is based on state of the art technologics like docker, kube
 * Internetconnection
 
 ## Get Started
-. run admin.sh senv
+Assuming that have a clean installation of ubuntu 18.03, run the following command one after another
+  
+    ``` bash
+    ./admin.sh autoInstall
+    ./admin.sh senv
+    ./admin.sh down_subproject
+    ./admin.sh run_sample```
+
+OR
+
+   ``` bash
+    ./admin.sh one_click```
