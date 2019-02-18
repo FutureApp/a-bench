@@ -9,3 +9,11 @@ The framework itself is based on state of the art technologics like docker, kube
 
 * In order to provide a system which measures some basic-parameteres like cpu, ram, and so on, just be sure that 
     your (docker)images inheritate from this image... [A-Bench Image](https://notProvided)
+
+## Requirements
+
+* Ubunto 18.03
+* Internetconnection
+
+## Get Started
+. run admin.sh senv

@@ -33,12 +33,12 @@ case  $var  in
 (auto_install)
     bench_installMissingComponents 
 ;;
-(senv) #                    -- Starts a simple minikube enviroment.
+(senv) #                        -- Starts a simple minikube enviroment.
     bench_preflight
     
     minikube stop
     minikube delete 
-    minikube start  --memory=12000
+    minikube start  --memory=8000
     
     eval $(minikube docker-env) 
     minikube addons enable heapster
@@ -54,14 +54,25 @@ case  $var  in
                 """
 ;; 
 #-----------------------------------------------------------------------------------------[ Samples ]--
-(run_sample) #              -- Execute a sample-experiment
+(down_subproject) #             -- Execute a sample-experiment
+    cd submodules
+    git clone https://github.com/FutureApp/bigbenchv2.git
+;;
+(run_sample) #                  -- Execute a sample-experiment
     cd submodules/bigbenchv2/a-bench_connector/experiments
     bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
+;;
+#------------------------------------------------------------------------------------------[ Simple ]--
+(one_click) #                   -- Installs the framework + bigbench and executes a sample experiment.
+    ./$0 auto_install
+    ./$0 senv
+    ./$0 down_subproject
+    ./$0 run_sample
 ;;
 
 
 #--------------------------------------------------------------------------------------------[ Help ]--
-(--help) #                  -- Prints the help and usage message
+(--help) #                      -- Prints the help and usage message
     util_print_help
 ;;
     (*) 

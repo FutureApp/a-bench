@@ -10,7 +10,7 @@ MISSING_tag=${RR}Missing${NC}
 problemCounter=0
 
 
-needComponents=(git docker virtualbox minikube kubectl haus)
+needComponents=(git docker virtualbox minikube kubectl)
 
 # Verify if the specific command is executable. Based on the result, a specific message 
 # will be printed. For each missing component, a intern counter will be increased. 
