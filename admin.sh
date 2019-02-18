@@ -31,9 +31,11 @@ do
 case  $var  in
 #----------------------------------------------------------------------------[ Bench-Infrastructure ]--
 (auto_install)
-    bench_preflight
+    bench_installMissingComponents 
 ;;
 (senv) #                    -- Starts a simple minikube enviroment.
+    bench_preflight
+    
     minikube stop
     minikube delete 
     minikube start  --memory=12000
@@ -54,7 +56,7 @@ case  $var  in
 #-----------------------------------------------------------------------------------------[ Samples ]--
 (run_sample) #              -- Execute a sample-experiment
     cd submodules/bigbenchv2/a-bench_connector/experiments
-    bash experi01.sh run
+    bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 
 
