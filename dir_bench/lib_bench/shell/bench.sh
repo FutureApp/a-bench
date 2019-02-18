@@ -78,6 +78,7 @@ function finish_message {
                     $0 autoInstall
             """ 
         echo "If the error message presist, try to install the needed components manually."
+        exit 1
     fi
 }
 
