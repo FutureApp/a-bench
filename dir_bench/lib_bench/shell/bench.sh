@@ -10,7 +10,7 @@ MISSING_tag=${RR}Missing${NC}
 problemCounter=0
 
 
-
+needComponents=(git docker virtualbox minikube kubectl)
 
 # Verify if the specific command is executable. Based on the result, a specific message 
 # will be printed. For each missing component, a intern counter will be increased. 
@@ -26,8 +26,39 @@ function bench_preflightCheck {
     else
         echo "[x] ${commandToCheck}  detected."
     fi
+}
+
+# Verify if the specific command is executable.
+#
+# Argument 1: $1 -- Command to check for.
+# Return    : 0 if okay, else 1
+function bench_isCommandOk {
+    commandToCheck=$1
+    
+    if ! [ -x "$(command -v $commandToCheck)" ]; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
+function bench_installMissingComponents {
+    echo -e "$bench_tag Try to install all missing components"
+
+    for component in ${needComponents[*]}
+    do
+      commandAv=$((bench_isCommandOk $component))
+      if [ $commandAv -eq 1 ]
+    then
+      cd ../../install
+      bash "install_${component}.sh"
+    fi
+    done
+
+    finish_message
 
 }
+
 function finish_message {   
 
     echo ''
@@ -57,14 +88,11 @@ function finish_message {
 function bench_preflight {
     echo -e "$bench_tag Preflight in progress..."
 
-   
-    for component in git docker virtualbox minikube kubectl lauch
+ 
+    for component in ${needComponents[*]}
     do
       bench_preflightCheck $component
     done
 
     finish_message
 }
-
-# Runner
-bench_preflight
