@@ -3,11 +3,9 @@
 LB='\033[1;34m'
 RR='\033[1;31m'
 NC='\033[0m' # No Color
+
 bench_tag=${LB}[A-Bench]${NC}
-
-
 ex_tag="template_ex"
-
 
 
 if [[ $# -eq 0 ]] ; then
