@@ -1,0 +1,23 @@
+master-framework
+    + bench
+        lib_bench
+        chart
+        images
+        install
+    + git-submodule
+        bigbenchv2
+            chart
+            images
+            lib_bench
+                experiment.sh
+                    cus_deploy
+                    cus_prepare
+                    cus_workload
+                    cus_collect
+                    cus_clean
+                    cus_finish
+            |
+            |
+            |
+    * bench.sh
+    * README.md
