@@ -10,23 +10,26 @@ The framework itself is based on state of the art technologics like docker, kube
 * In order to provide a system which measures some basic-parameteres like cpu, ram, and so on, just be sure that 
     your (docker)images inheritate from this image... [A-Bench Image](https://notProvided)
 
-## Requirements
+## Get Started
+
+### Requirements
 
 * Ubunto 18.03
 * Internetconnection
 
-## Get Started
-Assuming that have a clean installation of ubuntu 18.03, run the following command one after another
+### Sample Execution
+
+Assuming that have a clean installation of ubuntu 18.03, run the following command:
+
+``` sh
+    ./admin.sh one_click
+```
+
+OR the longer version:
 
 ``` sh
     ./admin.sh autoInstall
     ./admin.sh senv
     ./admin.sh down_subproject
     ./admin.sh run_sample
-```
-
-OR
-
-``` sh
-    ./admin.sh one_click
 ```
