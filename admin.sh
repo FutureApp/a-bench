@@ -5,10 +5,10 @@ RR='\033[1;31m'
 NC='\033[0m' # No Color
 bench_tag=${LB}[A-Bench]${NC}
 
+
 home_framework=$(pwd)
 home_bench_sub_bigbench=$home_framework/submodules/bigbenchv2
 home_container_bench=/bigbenchv2
-
 
 # all functions calls are indicated by prefix <util_xxx>
 source dir_bench/lib_bench/shell/util.sh
@@ -16,7 +16,6 @@ source dir_bench/lib_bench/shell/util.sh
 source dir_bench/lib_bench/shell/kubernetes.sh
 # all functions calls are indicated by prefix <bench_xx>
 source dir_bench/lib_bench/shell/bench.sh
-
 
 
 
@@ -36,9 +35,10 @@ case  $var  in
 (senv) #                        -- Starts a simple minikube enviroment.
     bench_preflight
     
-    minikube stop
     minikube delete 
-    minikube start  --memory=8000
+    minikube start  --memory=8000 || \
+        echo "ERROR. Check the error-message, resolve the problem and then try again." && \
+        exit 1
     
     eval $(minikube docker-env) 
     minikube addons enable heapster
@@ -55,6 +55,7 @@ case  $var  in
 ;; 
 #-----------------------------------------------------------------------------------------[ Samples ]--
 (down_subproject) #             -- Execute a sample-experiment
+    mkdir -p submodules
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
 ;;
@@ -65,7 +66,7 @@ case  $var  in
 #------------------------------------------------------------------------------------------[ Simple ]--
 (one_click) #                   -- Installs the framework + bigbench and executes a sample experiment.
     ./$0 auto_install
-    ./$0 senv
+    ./$0 senv || exit 1
     ./$0 down_subproject
     ./$0 run_sample
 ;;
