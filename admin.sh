@@ -66,7 +66,8 @@ case  $var  in
 #------------------------------------------------------------------------------------------[ Simple ]--
 (one_click) #                   -- Installs the framework + bigbench and executes a sample experiment.
     ./$0 auto_install
-    ./$0 senv || exit 1
+    ./$0 senv
+    
     ./$0 down_subproject
     ./$0 run_sample
 ;;
