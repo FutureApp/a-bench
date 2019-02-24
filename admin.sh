@@ -37,9 +37,13 @@ case  $var  in
     
     minikube delete 
     minikube start  --memory=8000 || \
-        echo "ERROR. Check the error-message, resolve the problem and then try again." && \
-        exit 1
+        (   echo "ERROR. Check the error-message, resolve the problem and then try again." && \
+            exit 1)
     
+    # minikube after work 
+    util_sleep 10
+    # minikube tunnel --cleanup
+    # minikube tunnel
     eval $(minikube docker-env) 
     minikube addons enable heapster
 
@@ -52,6 +56,7 @@ case  $var  in
                 eval \$(minikube docker-env)
                 
                 """
+   # minikube dashboard
 ;; 
 #-----------------------------------------------------------------------------------------[ Samples ]--
 (down_subproject) #             -- Execute a sample-experiment
