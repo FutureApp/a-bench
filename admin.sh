@@ -32,7 +32,7 @@ case  $var  in
 (auto_install)
     bench_installMissingComponents 
 ;;
-(senv) #                        -- Starts a simple minikube enviroment.
+(senv) #                        -- Start the framework-env based on kubernetes and minikube
     bench_preflight
     
     minikube delete 
@@ -50,33 +50,47 @@ case  $var  in
     helm init
     util_sleep 10
     kubernetes_waitUntilAllPodsAvailable 10 40 10 # expected containers; retrys; sleep-time[s]
+    
+    # -----------
+
+    #build the data-collector image
+    docker build -t influxdb-client ./dir_bench/images/influxdb-client/image/.
+    # start the influxDB-collector-client
+    kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+
+    #### END
     echo -e     "${bench_tag} Startup procedure was successfully."
     echo -e     "${bench_tag} If you like to interact with docker in minikube then remember to link your docker with the one in minikube."
     echo -e     """${bench_tag} To do so, use the follwing command: 
                 eval \$(minikube docker-env)
                 
                 """
-   # minikube dashboard
 ;; 
-#-----------------------------------------------------------------------------------------[ Samples ]--
-(down_subproject) #             -- Execute a sample-experiment
-    mkdir -p submodules
-    cd submodules
-    git clone https://github.com/FutureApp/bigbenchv2.git
+(cold) #                        -- new code comes here
+    #build the data-collector image
+    docker build -t influxdb-client ./dir_bench/images/influxdb-client/image/.
+    # start the influxDB-collector-client
+    kubectl apply -f ./dir_bench/images/influxdb-client/image/kubernetes/deploy_influxdb-client.yaml
 ;;
-(run_sample) #                  -- Execute a sample-experiment
-    cd submodules/bigbenchv2/a-bench_connector/experiments
-    bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
-;;
-#------------------------------------------------------------------------------------------[ Simple ]--
-(one_click) #                   -- Installs the framework + bigbench and executes a sample experiment.
+#--------------------------------------------------------------------------------------------[ Demo ]--
+(demo_from_scratch) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
     ./$0 auto_install
     ./$0 senv
     
     ./$0 down_subproject
     ./$0 run_sample
 ;;
-
+#------------------------------------------------------------------------------------------[ Custom ]--
+# Here is a good place to insert code which interacts with your framework or benchmark
+(down_subproject) #             -- Downloads your custom-benchmark or framework
+    mkdir -p submodules
+    cd submodules
+    git clone https://github.com/FutureApp/bigbenchv2.git
+;;
+(run_sample) #                  -- Executes the specification of your experiment
+    cd submodules/bigbenchv2/a-bench_connector/experiments
+    bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
+;;
 
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help) #                      -- Prints the help and usage message
