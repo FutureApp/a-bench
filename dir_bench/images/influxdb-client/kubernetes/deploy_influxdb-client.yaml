@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-client
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb-client
+  template:
+    metadata:
+      labels:
+        app: influxdb-client
+    spec:
+      containers:
+      - name: influxdb-client
+        image: influxdb-client
+        imagePullPolicy: Never  
+        ports:
+        - containerPort: 8080
