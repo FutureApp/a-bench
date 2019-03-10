@@ -4,4 +4,4 @@ curl -Lo helm.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-v2.12.3
 tar -zxvf helm.tar.gz && \
 sudo mv linux-amd64/helm /usr/local/bin/helm && \
 rm helm.tar.gz && \
-rm linux-amd64
+rm -rf linux-amd64
