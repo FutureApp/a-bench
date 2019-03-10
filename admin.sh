@@ -36,7 +36,7 @@ case  $var  in
     bench_preflight
     
     minikube delete 
-    minikube start  --memory=8000 || \
+    minikube start --cpus 8 --memory 8192 || \
         (   echo "ERROR. Check the error-message, resolve the problem and then try again." && \
             exit 1)
     
@@ -48,7 +48,7 @@ case  $var  in
     minikube addons enable heapster
 
     helm init
-    
+    util_sleep 10
     kubernetes_waitUntilAllPodsAvailable 10 40 10 # expected containers; retrys; sleep-time[s]
     echo -e     "${bench_tag} Startup procedure was successfully."
     echo -e     "${bench_tag} If you like to interact with docker in minikube then remember to link your docker with the one in minikube."
