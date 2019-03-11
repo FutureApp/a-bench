@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: influxdb-client
-        image: influxdb-client
-        imagePullPolicy: Never  
+        #FIXME Create abench repo 
+        image: blackflagxxx/abench-influxdb-client:latest
         ports:
         - containerPort: 8080
