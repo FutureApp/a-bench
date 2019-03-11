@@ -70,8 +70,36 @@ function util_relResultDirPath()
     current_time=$(date "+%Y%m%d_%H_%M_%S")
     dir_name=$current_time
     pathToCollectDir=$home_framework/results/$dir_name
-    #mkdir -p $pathToCollectDir
     
     # Return
     echo $pathToCollectDir
+}
+
+# Collects the measurements by connecting to a influxdb-client which holds a specific 
+# python-script to do the work. The collected data will be then saved in specific directory for later
+# analysis. All data will be saved in the provided directory. Path will be created if the location 
+# doesn't exists. If
+
+
+
+# Argument 1: $1    -- Unix-timestamp as start-stamp in seconds e.g from date + "%s"
+# Argument 2: $2    -- Unix-timestamp as end-stamp in seconds e.g from date + "%s"
+# Argument 3: $3    -- Identifier of the container where method can connect to in order to  
+#                      have access to the measurements
+# Argument 3: $4    -- Optional -- If not provided, a timesamp for the dir-name will be used
+
+# Returns   :       -- Path to location where the data was saved
+function util_collectMeasurements()
+{   
+    default_prefix_dirname="~"
+    start_stamp=$1
+    end_stamp=$2
+    client_container=$3
+    opt_dirname=$4
+#              &&   empty          || not empty
+    [  -z $4 ] &&   opt_dirname=`util_relResultDirPath $default_prefix_dirname` \
+                ||  opt_dirname=$4
+    
+    echo "Collector called with the following parameters:"
+    echo "start: <$1>, end:<$2>, client:<$3>, dirname:<$opt_dirname>"
 }
