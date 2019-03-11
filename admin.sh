@@ -29,7 +29,7 @@ for var in "$@"
 do
 case  $var  in
 #----------------------------------------------------------------------------[ Bench-Infrastructure ]--
-(auto_install)
+(auto_install) #                -- Triggers the scripts to automatically install all necessary components
     bench_installMissingComponents 
 ;;
 (senv) #                        -- Start the framework-env based on kubernetes and minikube
@@ -49,15 +49,12 @@ case  $var  in
 
     helm init
     util_sleep 10
-    kubernetes_waitUntilAllPodsAvailable 10 40 10 # expected containers; retrys; sleep-time[s]
-    
     # -----------
 
-    #build the data-collector image
-    docker build -t influxdb-client ./dir_bench/images/influxdb-client/image/.
     # start the influxDB-collector-client
     kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
 
+    kubernetes_waitUntilAllPodsAvailable 11 40 10 # expected containers; retrys; sleep-time[s]
     #### END
     echo -e     "${bench_tag} Startup procedure was successfully."
     echo -e     "${bench_tag} If you like to interact with docker in minikube then remember to link your docker with the one in minikube."
@@ -67,10 +64,21 @@ case  $var  in
                 """
 ;; 
 (cold) #                        -- new code comes here
-    #build the data-collector image
-    docker build -t influxdb-client ./dir_bench/images/influxdb-client/image/.
-    # start the influxDB-collector-client
-    kubectl apply -f ./dir_bench/images/influxdb-client/image/kubernetes/deploy_influxdb-client.yaml
+    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}')
+    #./$0 down_subproject
+    start_time=$(date +%s%N)
+    ./$0 run_sample
+    end_time=$(date +%s%N)
+    echo "s $start_time | e $end_time"
+    echo "ende" 
+    kubectl exec -it --namespace=kube-system $client_pod_id --\
+    python3 /collector.py   --host monitoring-influxdb  --dbname k8s  \
+                            --exportDir /results        --exportFile exp00 \
+                            --lTimeBorder $start_time   --rTimeBorder $end_time
+
+    kubectl cp kube-system/$client_pod_id:/results/exp00.xlsx .
+    
+
 ;;
 #--------------------------------------------------------------------------------------------[ Demo ]--
 (demo_from_scratch) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
@@ -78,7 +86,13 @@ case  $var  in
     ./$0 senv
     
     ./$0 down_subproject
+    mini_ip=$(minikube ip)
+    xdg-open http://$mini_ip:30002/dashboard/db/pods?orgId=1
+    start_time=$(date + "%s")
     ./$0 run_sample
+    end_time= $(date + "%s")
+
+
 ;;
 #------------------------------------------------------------------------------------------[ Custom ]--
 # Here is a good place to insert code which interacts with your framework or benchmark
