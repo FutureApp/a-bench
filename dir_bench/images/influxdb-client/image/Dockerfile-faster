@@ -1,0 +1,11 @@
+FROM server
+
+ENV  LC_ALL=C.UTF-8
+ENV  LANG=C.UTF-8
+ENV  FLASK_APP=/rest_server/main.py
+
+
+ADD script/collector.py /collector.py
+ADD rest_server /rest_server
+
+EXPOSE 8888

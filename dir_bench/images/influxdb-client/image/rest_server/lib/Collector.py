@@ -6,6 +6,7 @@ import re
 
 import influxdb as idb
 import pandas as pd
+import Testo
 
 
 def main(): 

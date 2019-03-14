@@ -80,6 +80,17 @@ case  $var  in
     
 
 ;;
+(server)
+    cd dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+
+    kubectl delete  -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    kubectl apply   -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    sleep 15
+    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}')
+    kubectl exec -it --namespace=kube-system $client_pod_id -- bash 
+    python -m flask run --port 8080 --host 0.0.0.0 & 
+    curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=0000000000000000000&rTimeBorder=9999999999999999999'
+;;
 #--------------------------------------------------------------------------------------------[ Demo ]--
 (demo_from_scratch) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
     ./$0 auto_install
