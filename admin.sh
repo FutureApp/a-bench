@@ -52,6 +52,7 @@ case  $var  in
     # -----------
 
     # start the influxDB-collector-client
+    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
     kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
 
     kubernetes_waitUntilAllPodsAvailable 11 40 10 # expected containers; retrys; sleep-time[s]
@@ -63,47 +64,49 @@ case  $var  in
                 
                 """
 ;; 
-(cold) #                        -- new code comes here
-    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}')
-    #./$0 down_subproject
-    start_time=$(date +%s%N)
-    ./$0 run_sample
-    end_time=$(date +%s%N)
-    echo "s $start_time | e $end_time"
-    echo "ende" 
-    kubectl exec -it --namespace=kube-system $client_pod_id --\
-    python3 /collector.py   --host monitoring-influxdb  --dbname k8s  \
-                            --exportDir /results        --exportFile exp00 \
-                            --lTimeBorder $start_time   --rTimeBorder $end_time
-
-    kubectl cp kube-system/$client_pod_id:/results/exp00.xlsx .
-    
-
-;;
 (server)
-    cd dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
-
-    kubectl delete  -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    kubectl apply   -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    sleep 15
-    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}')
-    kubectl exec -it --namespace=kube-system $client_pod_id -- bash 
-    python -m flask run --port 8080 --host 0.0.0.0 & 
-    curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=0000000000000000000&rTimeBorder=9999999999999999999'
+    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
+    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
+    "curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=1111111111111111111&rTimeBorder=2100000000000000000' --output helloworld1.xlsx" && \
+    kubectl cp  kube-system/$client_pod_id:/helloworld1.xlsx ./
 ;;
 #--------------------------------------------------------------------------------------------[ Demo ]--
 (demo_from_scratch) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
-    ./$0 auto_install
     ./$0 senv
-    
-    ./$0 down_subproject
+    sleep 15
+    export_file_name="exo001.xlsx"
     mini_ip=$(minikube ip)
-    xdg-open http://$mini_ip:30002/dashboard/db/pods?orgId=1
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?\
+    orgId=1&\
+    var-namespace=kube-system&\
+    var-podname=etcd-minikube&\
+    from=now-15m&\
+    to=now&\
+    refresh=10s"
+    ./$0 down_subproject
+    
+    xdg-open $linkToDashboard
     start_time=$(date + "%s")
     ./$0 run_sample
     end_time= $(date + "%s")
 
-
+    # ------------------------------------------------------------------------- [ IMPORTANT ]
+    #
+    # In order to collect the data from the infrastrucutre. 
+    # This code could be executed within your experiment-source-code
+    # in order to have a more accurate view of the performance of your workflow. 
+    # (The time-intervall between left and right border could be set more accuratly)
+    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
+    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
+    "curl 'localhost:8080/test/xlsx?\
+    host=monitoring-influxdb&\
+    port=8086&\
+    dbname=k8s&\
+    filename=hello&\
+    lTimeBorder=${start_time}&\
+    rTimeBorder=${end_time}' \
+    --output $export_file_name" && \
+    kubectl cp  kube-system/$client_pod_id:/$export_file_name ./
 ;;
 #------------------------------------------------------------------------------------------[ Custom ]--
 # Here is a good place to insert code which interacts with your framework or benchmark

@@ -10,12 +10,6 @@ class QueryHandler():
     def __init__(self, saveDirectory):
         self.saveDirectory  =   saveDirectory
 
-    def _querySelAllFromMeasureResAsDataFrame(client, meas, lborder, rborder):
-        print("querySelAllFromMeasureResAsDataFrame: called")
-        query   = 'SELECT * FROM "{}" where time > {} and time < {}'.format(meas, lborder ,rborder)
-        points  = client.query(query, chunked=True, chunk_size=10000).get_points()
-        return pd.DataFrame(points)
-
     def queryAndGetPathToResultsXLSX(self, host, port, DBname, filePrefix, leftBorder, rightBorder):
         print("queryAndGetPathToResults: called -- {} {} {} {} {} {}".format(
                 host, port, DBname, filePrefix, leftBorder, rightBorder))   
@@ -30,12 +24,15 @@ class QueryHandler():
         for measurement in listOfMeasurements:
             nameOfMeas          = measurement['name']
             print("Start to collect from {}".format(nameOfMeas))
-            resDataFrame = self._querySelAllFromMeasureResAsDataFrame(
-                client=realClient, meas=nameOfMeas, lborder=leftBorder, rightBorder=rightBorder)
-            
+            #resDataFrame    = querySelAllFromMeasureResAsDataFrame()
+            resDataFrame        = self.out(client=realClient,nameofmeas=nameOfMeas,lborder=leftBorder,rborder=rightBorder)
             cleanedNameOfMeas   = re.sub('[^A-Za-z0-9]+', '_', nameOfMeas)
             resDataFrame.to_excel(exWriter,sheet_name=cleanedNameOfMeas)
         exWriter.close()
-        #
-        #fileExportLocation = "kind"
         return fileExportLocation
+
+    def out(self, client, nameofmeas,lborder,rborder):
+        query               = 'SELECT * FROM "{}" WHERE time >= {} AND time <= {}'.format(nameofmeas, lborder ,rborder)
+        points              = client.query(query, chunked=True, chunk_size=10000).get_points()
+        resDataFrame        = pd.DataFrame(points)
+        return resDataFrame

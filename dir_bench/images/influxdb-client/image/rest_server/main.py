@@ -1,8 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 
 from logic_querys import *
-
+import os
 app = Flask(__name__)
+
+
 
 @app.route('/ping', methods=['GET','POST'])
 def get_live():
@@ -41,6 +43,7 @@ def get_test():
                                             host        = host,     port         = port, 
                                             DBname      = dbname,   filePrefix   = filename,
                                             leftBorder  = lBorder,  rightBorder  = rBorder)
-    # write from data
     
-    return finalFileLocation
+    return send_from_directory(
+    os.path.dirname(finalFileLocation),
+    os.path.basename(finalFileLocation))

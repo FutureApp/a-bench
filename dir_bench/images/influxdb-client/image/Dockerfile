@@ -24,7 +24,13 @@ ENV  LANG=C.UTF-8
 ENV  FLASK_APP=/rest_server/main.py
 
 
-ADD script/collector.py /collector.py
 ADD rest_server /rest_server
+ADD script/collector.py /collector.py
+ADD script/entrypoint.sh /entrypoint2.sh
+
+#ENTRYPOINT ["sh", "-c", "echo $HOME && tail -f /dev/null" ]
+#CMD ["python3 -m flask run --port 8080 --host 0.0.0.0"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["python3 -m flask run --port 8080 --host 0.0.0.0 & tail -f /dev/null"]
 
 EXPOSE 8080
