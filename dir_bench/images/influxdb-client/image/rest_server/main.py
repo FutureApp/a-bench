@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/ping', methods=['GET','POST'])
 def get_live():
-    return "I'm alive. ping* ping*"
+    return "pong*"
 
 
 @app.route('/mes', methods=['GET','POST'])

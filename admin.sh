@@ -64,7 +64,11 @@ case  $var  in
                 
                 """
 ;; 
-(server)
+(dev_process_collector_client)
+    kubectl delete -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+    kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    util_sleep 30
     client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
     kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
     "curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=1111111111111111111&rTimeBorder=2100000000000000000' --output helloworld1.xlsx" && \
@@ -77,17 +81,17 @@ case  $var  in
     export_file_name="exo001.xlsx"
     mini_ip=$(minikube ip)
     linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?\
-    orgId=1&\
-    var-namespace=kube-system&\
-    var-podname=etcd-minikube&\
-    from=now-15m&\
-    to=now&\
-    refresh=10s"
+orgId=1&\
+var-namespace=kube-system&\
+var-podname=etcd-minikube&\
+from=now-15m&\
+to=now&\
+refresh=10s"
     ./$0 down_subproject
-    
-    xdg-open $linkToDashboard
+    export_file_name="exo001.xlsx"
+    #xdg-open $linkToDashboard
     start_time=$(date + "%s")
-    ./$0 run_sample
+    #./$0 run_sample
     end_time= $(date + "%s")
 
     # ------------------------------------------------------------------------- [ IMPORTANT ]
@@ -97,15 +101,16 @@ case  $var  in
     # in order to have a more accurate view of the performance of your workflow. 
     # (The time-intervall between left and right border could be set more accuratly)
     client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
+    start_time=1;end_time=999999999999 
     kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
     "curl 'localhost:8080/test/xlsx?\
-    host=monitoring-influxdb&\
-    port=8086&\
-    dbname=k8s&\
-    filename=hello&\
-    lTimeBorder=${start_time}&\
-    rTimeBorder=${end_time}' \
-    --output $export_file_name" && \
+host=monitoring-influxdb&\
+port=8086&\
+dbname=k8s&\
+filename=hello&\
+lTimeBorder=1&\
+rTimeBorder=999999999999999999' \
+--output $export_file_name" && \
     kubectl cp  kube-system/$client_pod_id:/$export_file_name ./
 ;;
 #------------------------------------------------------------------------------------------[ Custom ]--
