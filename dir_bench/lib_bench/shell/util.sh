@@ -31,7 +31,7 @@ function util_sleep()
 {   
     # scr:  https://stackoverflow.com/questions/12498304/using-bash-to-display-a-progress-working-indicator
     # user: William Pursell
-    echo "Execution will stop for $1 seconds."
+    echo "Execution will pause for $1 seconds."
     sleep $1 &
     pid=$! # Process Id of the previous running command
     spin='-\|/'
