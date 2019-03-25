@@ -31,7 +31,7 @@ class QueryHandler():
         exWriter.close()
         return fileExportLocation
 
-    def out(self, client, nameofmeas,lborder,rborder):
+    def makeDBQueryForDataPoints(self, client, nameofmeas,lborder,rborder):
         query               = 'SELECT * FROM "{}" WHERE time >= {} AND time <= {}'.format(nameofmeas, lborder ,rborder)
         points              = client.query(query, chunked=True, chunk_size=10000).get_points()
         resDataFrame        = pd.DataFrame(points)
