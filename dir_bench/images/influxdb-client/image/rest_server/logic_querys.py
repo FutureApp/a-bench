@@ -19,7 +19,7 @@ class QueryHandler():
 
         listOfMeasurements  = realClient.get_list_measurements()
         print("export to {}".format(fileExportLocation))
-        exWriter            = pd.ExcelWriter(fileExportLocation)
+        exWriter                = pd.ExcelWriter(fileExportLocation)
         print("Founds <{}> measurements in total. Gathering will start now.".format(len(listOfMeasurements)))
         for measurement in listOfMeasurements:
             nameOfMeas          = measurement['name']
