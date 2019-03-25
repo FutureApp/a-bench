@@ -13,11 +13,11 @@ class QueryHandler():
     def queryAndGetPathToResultsXLSX(self, host, port, DBname, filePrefix, leftBorder, rightBorder):
         print("queryAndGetPathToResults: called -- {} {} {} {} {} {}".format(
                 host, port, DBname, filePrefix, leftBorder, rightBorder))   
-        fileExportLocation  = "{}/{}.xlsx".format(self.saveDirectory, filePrefix)
+        fileExportLocation      = "{}/{}.xlsx".format(self.saveDirectory, filePrefix)
         realClient              = idb.InfluxDBClient(host = host, port = port)
         realClient.switch_database(database = DBname)
 
-        listOfMeasurements  = realClient.get_list_measurements()
+        listOfMeasurements      = realClient.get_list_measurements()
         print("export to {}".format(fileExportLocation))
         exWriter                = pd.ExcelWriter(fileExportLocation)
         print("Founds <{}> measurements in total. Gathering will start now.".format(len(listOfMeasurements)))
@@ -25,7 +25,7 @@ class QueryHandler():
             nameOfMeas          = measurement['name']
             print("Start to collect from {}".format(nameOfMeas))
             #resDataFrame    = querySelAllFromMeasureResAsDataFrame()
-            resDataFrame        = self.out(client=realClient,nameofmeas=nameOfMeas,lborder=leftBorder,rborder=rightBorder)
+            resDataFrame        = self.makeDBQueryForDataPoints(client=realClient,nameofmeas=nameOfMeas,lborder=leftBorder,rborder=rightBorder)
             cleanedNameOfMeas   = re.sub('[^A-Za-z0-9]+', '_', nameOfMeas)
             resDataFrame.to_excel(exWriter,sheet_name=cleanedNameOfMeas)
         exWriter.close()
