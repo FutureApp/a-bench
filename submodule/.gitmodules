@@ -1,0 +1,3 @@
+[submodule "bigbenchv2"]
+	path = bigbenchv2
+	url = https://github.com/FutureApp/bigbenchv2.git
