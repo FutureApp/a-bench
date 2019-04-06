@@ -4,6 +4,7 @@
 # Don't forget that the script must have to be in a specific format, otherwise
 # the message will not show the expected result. Have fun!
 function util_print_help () {
+    # special thanks to Ma_Sys.ma <https://github.com/m7a> for this code-snipped :)
     echo -e  "${bench} USAGE $var <case>"
     echo -e 
     echo -e  The following cases are available:

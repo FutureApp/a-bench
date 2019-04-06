@@ -61,6 +61,7 @@ case  $var  in
 ;;
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
+    # special thanks to Ma_Sys.ma <https://github.com/m7a> for the following piece of code
     echo -e  "${bench} USAGE $var <case>"
     echo -e 
     echo -e  The following cases are available:
