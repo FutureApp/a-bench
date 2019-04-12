@@ -89,10 +89,10 @@ to=now&\
 refresh=10s"
     ./$0 down_subproject
     export_file_name="exo001.xlsx"
-    #xdg-open $linkToDashboard
+    xdg-open $linkToDashboard
     start_time=$(date + "%s")
-    #./$0 run_sample
-    end_time= $(date + "%s")
+    ./$0 run_sample
+    end_time=$(date + "%s")
 
     # ------------------------------------------------------------------------- [ IMPORTANT ]
     #
@@ -103,14 +103,8 @@ refresh=10s"
     client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
     start_time=1;end_time=999999999999 
     kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
-    "curl 'localhost:8080/test/xlsx?\
-host=monitoring-influxdb&\
-port=8086&\
-dbname=k8s&\
-filename=hello&\
-lTimeBorder=1&\
-rTimeBorder=999999999999999999' \
---output $export_file_name" && \
+    "curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$start_time&rTimeBorder=$end_time' --output $export_file_name
+    --output $export_file_name" && \
     kubectl cp  kube-system/$client_pod_id:/$export_file_name ./
 ;;
 #------------------------------------------------------------------------------------------[ Custom ]--
