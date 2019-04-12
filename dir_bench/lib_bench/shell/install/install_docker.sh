@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 sudo apt-get update
 sudo apt-get -y install \
     apt-transport-https \
@@ -22,4 +21,3 @@ sudo docker run hello-world
 
 sudo groupadd docker
 sudo usermod -aG docker $USER
-
