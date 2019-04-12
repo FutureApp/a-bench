@@ -10,7 +10,7 @@ MISSING_tag=${RR}Missing${NC}
 problemCounter=0
 
 
-needComponents=(git docker virtualbox minikube kubectl helm)
+needComponents=(git docker virtualbox minikube kubectl helm curl cat)
 
 # Verify if the specific command is executable. Based on the result, a specific message 
 # will be printed. For each missing component, a intern counter will be increased. 
@@ -31,15 +31,21 @@ function bench_preflightCheck {
 function bench_installMissingComponents {
     echo -e "$bench_tag Try to install all missing components..."
     installLibrary=/dir_bench/lib_bench/shell/install
+    newComponent=0
+    checkedComponents=0
     for component in ${needComponents[*]}
-    do
+    do  
         if ! [ -x "$(command -v $component)" ]; then
             cur_home="$(pwd)"
             pathToInstallLib=$cur_home$installLibrary
             pathToInstallStruc="$pathToInstallLib/install_$component.sh"
             bash $pathToInstallStruc
+            newComponent=$((newComponent + 1))
         fi
+        checkedComponents=$((checkedComponents + 1))
     done
+    existendComponents=$((checkedComponents - newComponent))
+    echo -e "$bench_tag $existendComponents/$checkedComponents programs are already installed. Number of new installed programs $newComponent."
 }
 
 function finish_message {   
