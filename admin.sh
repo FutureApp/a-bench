@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#./admin.sh
 
 LB='\033[1;34m'
 RR='\033[1;31m'
@@ -17,9 +18,6 @@ source dir_bench/lib_bench/shell/kubernetes.sh
 # all functions calls are indicated by prefix <bench_xx>
 source dir_bench/lib_bench/shell/bench.sh
 
-
-
-
 if [[ $# -eq 0 ]] ; then
     util_print_help
     exit 0
@@ -28,11 +26,11 @@ fi
 for var in "$@"
 do
 case  $var  in
-#----------------------------------------------------------------------------[ Bench-Infrastructure ]--
+#---------------------------------------------------------------------------[ ABench-Infrastructure ]--
 (auto_install) #                -- Triggers the scripts to automatically install all necessary components
     bench_installMissingComponents 
 ;;
-(senv) #                        -- Start the framework-env based on kubernetes and minikube
+(senv) #                        -- Starts the ABench-Testinfrastructure based on kubernetes and minikube
     bench_preflight
     
     minikube delete 
@@ -51,7 +49,7 @@ case  $var  in
     util_sleep 10
     # -----------
 
-    # start the influxDB-collector-client
+    # starts the influxDB-collector-client
     cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
     kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
 
@@ -80,6 +78,9 @@ case  $var  in
     sleep 15
     export_file_name="exo001.xlsx"
     mini_ip=$(minikube ip)
+
+    # Looks complicated but it isn't! 
+    # Each new line stands just for a changable parameter. 
     linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?\
 orgId=1&\
 var-namespace=kube-system&\
@@ -87,21 +88,28 @@ var-podname=etcd-minikube&\
 from=now-15m&\
 to=now&\
 refresh=10s"
-    ./$0 down_subproject
+
+    ./$0 down_subproject        # ----------------- download sub-modules project
     export_file_name="exo001.xlsx"
-    #xdg-open $linkToDashboard
+    
+    xdg-open $linkToDashboard   # ----------------- open browser and show grafan-dashboard
+    
     start_time=$(date + "%s")
-    #./$0 run_sample
+    
+    ./$0 run_sample             # ----------------- executes a sample-experiment 
+    
     end_time= $(date + "%s")
 
-    # ------------------------------------------------------------------------- [ IMPORTANT ]
-    #
+    
     # In order to collect the data from the infrastrucutre. 
     # This code could be executed within your experiment-source-code
     # in order to have a more accurate view of the performance of your workflow. 
     # (The time-intervall between left and right border could be set more accuratly)
     client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
     start_time=1;end_time=999999999999 
+
+    # Looks complicated but it isn't! 
+    # Each new line stands just for a changable parameter. 
     kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
     "curl 'localhost:8080/test/xlsx?\
 host=monitoring-influxdb&\
@@ -111,10 +119,10 @@ filename=hello&\
 lTimeBorder=1&\
 rTimeBorder=999999999999999999' \
 --output $export_file_name" && \
+    
     kubectl cp  kube-system/$client_pod_id:/$export_file_name ./
 ;;
 #------------------------------------------------------------------------------------------[ Custom ]--
-# Here is a good place to insert code which interacts with your framework or benchmark
 (down_subproject) #             -- Downloads your custom-benchmark or framework
     mkdir -p submodules
     cd submodules
