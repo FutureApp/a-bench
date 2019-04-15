@@ -53,7 +53,8 @@ case  $var  in
 
     # start the influxDB-collector-client
     cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
-    kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    kubectl apply  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    kubectl create -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
 
     kubernetes_waitUntilAllPodsAvailable 11 40 10 # expected containers; retrys; sleep-time[s]
     #### END
