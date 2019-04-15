@@ -41,6 +41,10 @@ case  $var  in
             exit 1)
     
     # minikube after work 
+    # workaround to handle time based desync  between host and  minikube
+    # src: https://github.com/kubernetes/minikube/issues/1378
+    minikube ssh -- docker run  -it --rm --privileged --pid=host alpine nsenter \
+                                -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y)
     util_sleep 10
     # minikube tunnel --cleanup
     # minikube tunnel
@@ -122,16 +126,16 @@ refresh=10s"
 #    util_sleep 30
 #    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
 #    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
-    s_time=$(date +%s%N)
-    #util_sleep 11
-    e_time=$(date +%s%N)
-    s_time=1551974700000000000
-    e_time=2100000000000000000
+    s_time="$(date +%s%N | cut -b1-13)"
+    util_sleep 22
+    e_time="$(date +%s%N | cut -b1-13)"
+    
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    url="http://$ipxport_data_client/mes"
-    url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$start_time&rTimeBorder=$end_time"
+    url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
 
-    curl "$url" 
+    echo $url
+    date +%s%N | cut -b1-13
+    curl "$url" --output gone.xlsx
 #    && \
 #    #kubectl cp  kube-system/$client_pod_id:/helloworld1.xlsx ./
 ;;
