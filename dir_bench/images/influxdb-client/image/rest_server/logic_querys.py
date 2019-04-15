@@ -24,7 +24,6 @@ class QueryHandler():
         for measurement in listOfMeasurements:
             nameOfMeas          = measurement['name']
             print("Start to collect from {}".format(nameOfMeas))
-           # resDataFrame        = self.makeDBQueryForAllDataPoints(client=realClient,nameofmeas=nameOfMeas,lborder=leftBorder,rborder=rightBorder)
             resDataFrame        = self.makeDBQueryForDataPoints(client=realClient,nameofmeas=nameOfMeas,lborder=leftBorder,rborder=rightBorder)
             cleanedNameOfMeas   = re.sub('[^A-Za-z0-9]+', '_', nameOfMeas)
             resDataFrame.to_excel(exWriter,sheet_name=cleanedNameOfMeas)

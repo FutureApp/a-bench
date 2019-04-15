@@ -122,8 +122,16 @@ refresh=10s"
 #    util_sleep 30
 #    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
 #    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
+    s_time=$(date +%s%N)
+    #util_sleep 11
+    e_time=$(date +%s%N)
+    s_time=1551974700000000000
+    e_time=2100000000000000000
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    curl "http://$(ipxport_data_client)/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=1111111111111111111&rTimeBorder=2100000000000000000" --output helloworld1.xlsx 
+    url="http://$ipxport_data_client/mes"
+    url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$start_time&rTimeBorder=$end_time"
+
+    curl "$url" 
 #    && \
 #    #kubectl cp  kube-system/$client_pod_id:/helloworld1.xlsx ./
 ;;
