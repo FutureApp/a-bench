@@ -65,16 +65,7 @@ case  $var  in
                 
                 """
 ;; 
-(dev_process_collector_client)
-    kubectl delete -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
-    kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    util_sleep 30
-    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
-    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
-    "curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=1111111111111111111&rTimeBorder=2100000000000000000' --output helloworld1.xlsx" && \
-    kubectl cp  kube-system/$client_pod_id:/helloworld1.xlsx ./
-;;
+
 #--------------------------------------------------------------------------------------------[ Demo ]--
 (demo_from_scratch) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
     ./$0 senv
@@ -103,8 +94,8 @@ refresh=10s"
     # (The time-intervall between left and right border could be set more accuratly)
     client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
     start_time=1;end_time=999999999999 
-    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
     "curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$start_time&rTimeBorder=$end_time' --output $export_file_name
+    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
     --output $export_file_name" && \
     kubectl cp  kube-system/$client_pod_id:/$export_file_name ./
 ;;
@@ -118,6 +109,23 @@ refresh=10s"
 (run_sample) #                  -- Executes the specification of your experiment
     cd submodules/bigbenchv2/a-bench_connector/experiments
     bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
+;;
+#---------------------------------------------------------------------------------------------[ DEV ]--
+(dev_replay) # Runs the code you defined. Development-purpose
+    ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
+    xdg-open "http://$ipxport_data_client/ping"
+;;
+(dev_process_collector_client) # Executes the process to collector the measurements from the data-client
+#    kubectl delete -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+#    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+#    kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+#    util_sleep 30
+#    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
+#    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
+    ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
+    curl "http://$(ipxport_data_client)/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=1111111111111111111&rTimeBorder=2100000000000000000" --output helloworld1.xlsx 
+#    && \
+#    #kubectl cp  kube-system/$client_pod_id:/helloworld1.xlsx ./
 ;;
 
 #--------------------------------------------------------------------------------------------[ Help ]--

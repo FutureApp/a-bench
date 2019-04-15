@@ -70,7 +70,6 @@ function finish_message {
     fi
 }
 
-
 # Verifys if all needed components are instsalled. At the end, the number of missing 
 # components will be displayed 
 #
@@ -89,4 +88,21 @@ function bench_preflight {
         exit 1
     fi
 
+}
+
+# Cratfts the service-information which you want do access.   
+# Works only corretly if you use minikube, the service is 
+# unique for all name-spaces and the service have to use node-expoer
+#
+# Argument 1: $1 -- Specifies the service you are looking for 
+#
+# Returns   : Returns the IP:Port of  the service as a string if the service exists.
+#             Otherwise empty.
+function bench_minikube_nodeExportedK8sService_IPxPORT {
+    serviceToLookFor=$1
+    serviceToLookFor=influxdb-client && \
+    nodeIP="$(minikube ip)"
+    servicePort="$(kubectl get svc --all-namespaces | grep $serviceToLookFor |\
+                awk '{print $6}' | awk -F ':|/' '{print $2}')"
+    echo "$nodeIP:$servicePort"
 }
