@@ -86,9 +86,9 @@ refresh=10s"
     ./$0 down_subproject
     export_file_name="exo001.xlsx"
     xdg-open $linkToDashboard
-    start_time=$(date + "%s")
+    start_time=$(date -u +"%s")
     ./$0 run_sample
-    end_time=$(date + "%s")
+    end_time=$(date -u + "%s")
 
     # ------------------------------------------------------------------------- [ IMPORTANT ]
     #
@@ -126,16 +126,26 @@ refresh=10s"
 #    util_sleep 30
 #    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
 #    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
-    s_time="$(date +%s%N | cut -b1-13)"
-    util_sleep 22
-    e_time="$(date +%s%N | cut -b1-13)"
+    s_time="$(date -u +%s%N | cut -b1-13)"
+    util_sleep 1
+    e_time="$(date -u +%s%N | cut -b1-13)"
     
+    #1555962316203
+    #1555962762302
+    s_time= 1555962316203
+            1111111111111
+    #1555963527139
+    t_time=1555962762302
+    #
+    s_time=1551974700000000000
+    e_time=2100000000000000000
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
     url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
 
     echo $url
-    date +%s%N | cut -b1-13
-    curl "$url" --output gone.xlsx
+    date -u +%s%N | cut -b1-13
+    curl "$url" --output gones.xlsx
+    curl http://$ipxport_data_client/ping
 #    && \
 #    #kubectl cp  kube-system/$client_pod_id:/helloworld1.xlsx ./
 ;;

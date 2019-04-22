@@ -32,6 +32,7 @@ class QueryHandler():
 
     def makeDBQueryForDataPoints(self, client, nameofmeas,lborder,rborder):
         query               = 'SELECT * FROM "{}" WHERE time >= {} AND time <= {}'.format(nameofmeas, lborder ,rborder)
+        query               = 'SELECT * FROM "{}"'.format(nameofmeas, lborder ,rborder)
         points              = client.query(query, chunked=True, chunk_size=10000).get_points()
         resDataFrame        = pd.DataFrame(points)
         return resDataFrame
