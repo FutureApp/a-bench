@@ -28,11 +28,11 @@ fi
 for var in "$@"
 do
 case  $var  in
-#----------------------------------------------------------------------------[ Bench-Infrastructure ]--
+#------------------------------------------------------------------------------------[ ABench - prim ]--
 (auto_install) #                -- Triggers the scripts to automatically install all necessary components
     bench_installMissingComponents 
 ;;
-(senv) #                        -- Start the framework-env based on kubernetes and minikube
+(senv_a) #                        -- Start the framework-env based on kubernetes and minikube
     bench_preflight
     
     minikube delete 
@@ -46,8 +46,6 @@ case  $var  in
     minikube ssh -- docker run  -it --rm --privileged --pid=host alpine nsenter \
                                 -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y)
     util_sleep 10
-    # minikube tunnel --cleanup
-    # minikube tunnel
     eval $(minikube docker-env) 
     minikube addons enable heapster
 
@@ -69,10 +67,13 @@ case  $var  in
                 
                 """
 ;; 
+(senv_b) #                        -- Start the framework-env in configuration B with cloud-infrastructure (not available right now)
+    echo "The framework in configuration B is not available right now."
+;;
 
-#--------------------------------------------------------------------------------------------[ Demo ]--
+#----------------------------------------------------------------------------------------[ Examples ]--
 (demo_from_scratch) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
-    ./$0 senv
+    ./$0 senv_a
     sleep 15
     export_file_name="exo001.xlsx"
     mini_ip=$(minikube ip)
@@ -86,9 +87,9 @@ refresh=10s"
     ./$0 down_subproject
     export_file_name="exo001.xlsx"
     xdg-open $linkToDashboard
-    start_time=$(date -u +"%s")
+    s_time="$(date -u +%s%N)"
     ./$0 run_sample
-    end_time=$(date -u + "%s")
+    e_time="$(date -u +%s%N)"
 
     # ------------------------------------------------------------------------- [ IMPORTANT ]
     #
@@ -115,39 +116,23 @@ refresh=10s"
     bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
-(dev_replay) # Runs the code you defined. Development-purpose
+(dev_code) #                    -- Executes dev-code Development-purpose
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
     xdg-open "http://$ipxport_data_client/ping"
 ;;
-(dev_process_collector_client) # Executes the process to collector the measurements from the data-client
-#    kubectl delete -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-#    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
-#    kubectl apply -f ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-#    util_sleep 30
-#    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
-#    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
-    s_time="$(date -u +%s%N | cut -b1-13)"
-    util_sleep 1
-    e_time="$(date -u +%s%N | cut -b1-13)"
+(dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
     
-    #1555962316203
-    #1555962762302
-    s_time= 1555962316203
-            1111111111111
-    #1555963527139
-    t_time=1555962762302
-    #
-    s_time=1551974700000000000
-    e_time=2100000000000000000
+    s_time="$(date -u +%s%N)"
+    util_sleep 120
+    e_time="$(date -u +%s%N)"
+    
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
     url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
 
-    echo $url
-    date -u +%s%N | cut -b1-13
-    curl "$url" --output gones.xlsx
-    curl http://$ipxport_data_client/ping
-#    && \
-#    #kubectl cp  kube-system/$client_pod_id:/helloworld1.xlsx ./
+    data_location="./dev_pcc_meas.xlsx"
+    echo "Calling the following URl <$url>"
+    curl "$url" --output $data_location
+    echo "Data is saved under $data_location"
 ;;
 
 #--------------------------------------------------------------------------------------------[ Help ]--
