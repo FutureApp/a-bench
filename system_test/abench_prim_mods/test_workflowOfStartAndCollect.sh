@@ -1,0 +1,1 @@
+290 < stat --printf="%s" dev_pcc_meas.xlsx
