@@ -25,7 +25,7 @@ if [[ $# -eq 0 ]] ; then
     exit 0
 fi
 
-for var in "$@"
+for var in "$1"
 do
 case  $var  in
 #------------------------------------------------------------------------------------[ ABench - prim ]--
@@ -107,24 +107,30 @@ case  $var  in
     bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
+(dev_hacky) #                   -- Hacky-Code
+    echo "Hacky got triggered"
+    echo "Param 0 $0"
+    echo "Param 1 $1"
+    echo "Param 2 $2"
+;;
 (dev_code) #                    -- Executes dev-code Development-purpose
-    docker rmi -f data-server
-    kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
-    util_sleep 60
-    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
-    kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
-
-    util_sleep 60
-    ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    xdg-open "http://$ipxport_data_client/pings"
+    #docker rmi -f data-server
+    #kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    #kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
+    #util_sleep 60
+    #cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+    #kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    #kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
+#
+    #util_sleep 60
+    #ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
+    #xdg-open "http://$ipxport_data_client/pings"
 ;;
 (dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
     ./$0 dev_code
-    s_time="$(date -u +%s%N)"
-    #util_sleep 120
-    e_time="$(date -u +%s%N)"
+    s_time=$(bench_UTC_TimestampInNanos)
+    util_sleep 120
+    e_time=$(bench_UTC_TimestampInNanos)
     
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
     url="http://$ipxport_data_client/csv?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"

@@ -106,3 +106,8 @@ function bench_minikube_nodeExportedK8sService_IPxPORT {
                 awk '{print $6}' | awk -F ':|/' '{print $2}')"
     echo "$nodeIP:$servicePort"
 }
+
+
+function bench_UTC_TimestampInNanos {
+    echo "$(date -u +%s%N)"
+}
