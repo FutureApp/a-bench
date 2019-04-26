@@ -10,9 +10,9 @@ class QueryHandler():
     def __init__(self, saveDirectory):
         self.saveDirectory  =   saveDirectory
 
-    def queryAndGetPathToResultsXLSX(self, host, port, DBname, filePrefix, leftBorder, rightBorder):
+    def queryAndGetPathToResultsXLSX(self, host, port, DBname, filePrefix, fromT, toT):
         print("queryAndGetPathToResults: called -- {} {} {} {} {} {}".format(
-                host, port, DBname, filePrefix, leftBorder, rightBorder))   
+                host, port, DBname, filePrefix, fromT, toT))   
         fileExportLocation      = "{}/{}.xlsx".format(self.saveDirectory, filePrefix)
         realClient              = idb.InfluxDBClient(host = host, port = port)
         realClient.switch_database(database = DBname)
@@ -24,20 +24,20 @@ class QueryHandler():
         for measurement in listOfMeasurements:
             nameOfMeas          = measurement['name']
             print("Start to collect from {}".format(nameOfMeas))
-            resDataFrame        = self.makeDBQueryForDataPoints(client=realClient,nameofmeas=nameOfMeas,lborder=leftBorder,rborder=rightBorder)
+            resDataFrame        = self.makeDBQueryForDataPoints(client=realClient,nameofmeas=nameOfMeas,fromT=fromT,toT=toT)
             cleanedNameOfMeas   = re.sub('[^A-Za-z0-9]+', '_', nameOfMeas)
             resDataFrame.to_excel(exWriter,sheet_name=cleanedNameOfMeas)
         exWriter.close()
         return fileExportLocation
 
-    def makeDBQueryForDataPoints(self, client, nameofmeas,lborder,rborder):
-        query               = 'SELECT * FROM "{}" WHERE time >= {} AND time <= {}'.format(nameofmeas, lborder ,rborder)
-        query               = 'SELECT * FROM "{}"'.format(nameofmeas, lborder ,rborder)
+    def makeDBQueryForDataPoints(self, client, nameofmeas,fromT,toT):
+        query               = 'SELECT * FROM "{}" WHERE time >= {} AND time <= {}'.format(nameofmeas, fromT ,toT)
+        query               = 'SELECT * FROM "{}"'.format(nameofmeas, fromT ,toT)
         points              = client.query(query, chunked=True, chunk_size=10000).get_points()
         resDataFrame        = pd.DataFrame(points)
         return resDataFrame
 
-    def makeDBQueryForAllDataPoints(self, client, nameofmeas,lborder,rborder):
+    def makeDBQueryForAllDataPoints(self, client, nameofmeas):
         query               = 'SELECT * FROM "{}"'.format(nameofmeas)
         points              = client.query(query, chunked=True, chunk_size=10000).get_points()
         resDataFrame        = pd.DataFrame(points)
