@@ -123,13 +123,13 @@ case  $var  in
 (dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
     ./$0 dev_code
     s_time="$(date -u +%s%N)"
-    util_sleep 120
+    #util_sleep 120
     e_time="$(date -u +%s%N)"
     
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    url="http://$ipxport_data_client/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&fromT=$s_time&toT=$e_time"
+    url="http://$ipxport_data_client/csv?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 
-    data_location="./dev_pcc_meas.xlsx"
+    data_location="./experi.zip"
     echo "Calling the following URl <$url>"
     curl "$url" --output $data_location
     echo "Data is saved under $data_location"
