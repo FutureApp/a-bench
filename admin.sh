@@ -77,32 +77,23 @@ case  $var  in
     sleep 15
     export_file_name="exo001.xlsx"
     mini_ip=$(minikube ip)
-    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?\
-orgId=1&\
-var-namespace=kube-system&\
-var-podname=etcd-minikube&\
-from=now-15m&\
-to=now&\
-refresh=10s"
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&srefresh=10s"
     ./$0 down_subproject
-    export_file_name="exo001.xlsx"
     xdg-open $linkToDashboard
+
+    # experiment execution
     s_time="$(date -u +%s%N)"
     ./$0 run_sample
     e_time="$(date -u +%s%N)"
+    util_sleep 60 # Gives the System some time to write all mes-data into the influxdb - instance
+    
+    data_location="./exo001.xlsx"
+    ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client) # Port of the service is dynamic, therefore this query
+    url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
 
-    # ------------------------------------------------------------------------- [ IMPORTANT ]
-    #
-    # In order to collect the data from the infrastrucutre. 
-    # This code could be executed within your experiment-source-code
-    # in order to have a more accurate view of the performance of your workflow. 
-    # (The time-intervall between left and right border could be set more accuratly)
-    client_pod_id=$(kubectl get pods --all-namespaces | grep influxdb-client | awk '{print $2}') && \
-    start_time=1;end_time=999999999999 
-    "curl 'localhost:8080/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$start_time&rTimeBorder=$end_time' --output $export_file_name
-    kubectl exec -it --namespace=kube-system $client_pod_id -- bash -c \
-    --output $export_file_name" && \
-    kubectl cp  kube-system/$client_pod_id:/$export_file_name ./
+    echo "Calling the following URl <$url>"
+    curl "$url" --output $data_location
+    echo "Data is saved under $data_location"
 ;;
 #------------------------------------------------------------------------------------------[ Custom ]--
 # Here is a good place to insert code which interacts with your framework or benchmark
@@ -111,7 +102,7 @@ refresh=10s"
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
 ;;
-(run_sample) #                  -- Executes the specification of your experiment
+(run_sample) #                  -- Executes the experi01.sh experiment from bigbenchv2
     cd submodules/bigbenchv2/a-bench_connector/experiments
     bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
