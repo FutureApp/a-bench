@@ -109,8 +109,8 @@ case  $var  in
     git clone https://github.com/FutureApp/bigbenchv2.git
 ;;
 (run_sample) #                  -- Executes the experi01.sh experiment from bigbenchv2
-    cd submodules/bigbenchv2/a-bench_connector/experiments
-    bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
+    cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
+    bash experiment01.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
 (dev_hacky) #                   -- Hacky-Code
