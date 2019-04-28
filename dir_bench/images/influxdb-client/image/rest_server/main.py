@@ -13,6 +13,11 @@ def get_live():
 def get_lives():
     return "lings"
 
+@app.route('/files', methods=['GET', 'POST'])
+def get_files():
+    os.path("rest_server/static")
+    return "files"
+
 @app.route('/xlsx', methods=['GET', 'POST'])
 def get_xlsx():
     print("get_xlsx(): called")
@@ -36,7 +41,7 @@ def get_xlsx():
         os.path.dirname(finalFileLocation),
         os.path.basename(finalFileLocation))
 
-@app.route('/csv', methods=['GET', 'POST'])
+@app.route('/csv-zip', methods=['GET', 'POST'])
 def get_csv():
     print("get_csv(): called")
     host = request.args.get('host')

@@ -45,7 +45,9 @@ function bench_installMissingComponents {
         checkedComponents=$((checkedComponents + 1))
     done
     existendComponents=$((checkedComponents - newComponent))
-    echo -e "$bench_tag $existendComponents/$checkedComponents programs are already installed. Number of new installed programs $newComponent."
+    echo -e "$bench_tag $existendComponents/$checkedComponents programs are already installed. $newComponent new installed programs."
+    echo -e "$bench_tag Please restart your computer to complete the process, now."
+
 }
 
 function finish_message {   
@@ -105,4 +107,9 @@ function bench_minikube_nodeExportedK8sService_IPxPORT {
     servicePort="$(kubectl get svc --all-namespaces | grep $serviceToLookFor |\
                 awk '{print $6}' | awk -F ':|/' '{print $2}')"
     echo "$nodeIP:$servicePort"
+}
+
+
+function bench_UTC_TimestampInNanos {
+    echo "$(date -u +%s%N)"
 }

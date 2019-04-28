@@ -25,18 +25,18 @@ if [[ $# -eq 0 ]] ; then
     exit 0
 fi
 
-for var in "$@"
+for var in "$1"
 do
 case  $var  in
 #------------------------------------------------------------------------------------[ ABench - prim ]--
 (auto_install) #                -- Triggers the scripts to automatically install all necessary components
     bench_installMissingComponents 
 ;;
-(senv_a) #                        -- Start the framework-env based on kubernetes and minikube
+(senv_a) #                      -- Starts the framework-env in configuration A with kubernetes and minikube
     bench_preflight
     
     minikube delete 
-    minikube start --cpus 8 --memory 8192 || \
+    minikube start --cpus 4 --memory 4096 || \
         (   echo "ERROR. Check the error-message, resolve the problem and then try again." && \
             exit 1)
     
@@ -66,8 +66,9 @@ case  $var  in
                 eval \$(minikube docker-env)
                 
                 """
-;; 
-(senv_b) #                        -- Start the framework-env in configuration B with cloud-infrastructure (not available right now)
+;;
+
+(senv_b) #                      -- Starts the framework-env in configuration B with cloud-infrastructure - not available right now -
     echo "The framework in configuration B is not available right now."
 ;;
 
@@ -78,23 +79,28 @@ case  $var  in
     export_file_name="exo001.xlsx"
     mini_ip=$(minikube ip)
     linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&srefresh=10s"
-    ./$0 down_subproject
-    xdg-open $linkToDashboard
 
+    # opens some dash-boards    
+    xdg-open $linkToDashboard &
+    minikube dashboard &
+
+    # downloads the sub-module bbv2
+    ./$0 down_subproject
     # experiment execution
-    s_time="$(date -u +%s%N)"
+    s_time=$(bench_UTC_TimestampInNanos)
     ./$0 run_sample
-    e_time="$(date -u +%s%N)"
+    e_time=$(bench_UTC_TimestampInNanos)
     util_sleep 60 # Gives the System some time to write all mes-data into the influxdb - instance
     
-    data_location="./exo001.xlsx"
+    data_location="./experiment01.zip"
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client) # Port of the service is dynamic, therefore this query
-    url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
+    url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 
     echo "Calling the following URl <$url>"
     curl "$url" --output $data_location
     echo "Data is saved under $data_location"
 ;;
+
 #------------------------------------------------------------------------------------------[ Custom ]--
 # Here is a good place to insert code which interacts with your framework or benchmark
 (down_subproject) #             -- Downloads your custom-benchmark or framework
@@ -107,6 +113,12 @@ case  $var  in
     bash experi01.sh run # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
+(dev_hacky) #                   -- Hacky-Code
+    echo "Hacky got triggered"
+    echo "Param 0 $0"
+    echo "Param 1 $1"
+    echo "Param 2 $2"
+;;
 (dev_code) #                    -- Executes dev-code Development-purpose
     docker rmi -f data-server
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
@@ -115,19 +127,19 @@ case  $var  in
     cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
     kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
-
+    
     util_sleep 60
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    xdg-open "http://$ipxport_data_client/pings"
 ;;
+
 (dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
-    ./$0 dev_code
-    s_time="$(date -u +%s%N)"
-    #util_sleep 120
-    e_time="$(date -u +%s%N)"
+    #./$0 dev_code
+    s_time=$(bench_UTC_TimestampInNanos)
+    util_sleep 2
+    e_time=$(bench_UTC_TimestampInNanos)
     
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    url="http://$ipxport_data_client/csv?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+    url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 
     data_location="./experi.zip"
     echo "Calling the following URl <$url>"
