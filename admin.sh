@@ -114,17 +114,17 @@ case  $var  in
     echo "Param 2 $2"
 ;;
 (dev_code) #                    -- Executes dev-code Development-purpose
-    #docker rmi -f data-server
-    #kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    #kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
-    #util_sleep 60
-    #cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
-    #kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
-    #kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
-#
-    #util_sleep 60
-    #ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    #xdg-open "http://$ipxport_data_client/pings"
+    docker rmi -f data-server
+    kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
+    util_sleep 60
+    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+    kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
+    kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
+    
+    util_sleep 60
+    ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
+    xdg-open "http://$ipxport_data_client/pings"
 ;;
 (dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
     ./$0 dev_code
