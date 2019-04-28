@@ -63,7 +63,7 @@ function util_sleep()
 # Return:   /usr/home/test/results/20190101145559
 
 # Argument 1: $1 -- Prefix - Path for the directory
-# Return    :    -- Path to the directory.
+# Return    :    -- Path to  directory.
 function util_relResultDirPath()
 {   
     home_framework=$1

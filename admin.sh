@@ -82,14 +82,15 @@ case  $var  in
     xdg-open $linkToDashboard
 
     # experiment execution
-    s_time="$(date -u +%s%N)"
+    s_time=$(bench_UTC_TimestampInNanos)
     ./$0 run_sample
     e_time="$(date -u +%s%N)"
     util_sleep 60 # Gives the System some time to write all mes-data into the influxdb - instance
     
-    data_location="./exo001.xlsx"
+    data_location="./experiment01.zip"
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client) # Port of the service is dynamic, therefore this query
-    url="http://$ipxport_data_client/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
+    url="http://$ipxport_data_client/csv-?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+
 
     echo "Calling the following URl <$url>"
     curl "$url" --output $data_location
@@ -124,16 +125,15 @@ case  $var  in
     
     util_sleep 60
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    xdg-open "http://$ipxport_data_client/pings"
 ;;
 (dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
     ./$0 dev_code
     s_time=$(bench_UTC_TimestampInNanos)
-    util_sleep 120
+    util_sleep 2
     e_time=$(bench_UTC_TimestampInNanos)
     
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
-    url="http://$ipxport_data_client/csv?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+    url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 
     data_location="./experi.zip"
     echo "Calling the following URl <$url>"

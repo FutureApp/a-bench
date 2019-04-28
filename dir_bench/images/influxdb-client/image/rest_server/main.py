@@ -41,7 +41,7 @@ def get_xlsx():
         os.path.dirname(finalFileLocation),
         os.path.basename(finalFileLocation))
 
-@app.route('/csv', methods=['GET', 'POST'])
+@app.route('/csv-zip', methods=['GET', 'POST'])
 def get_csv():
     print("get_csv(): called")
     host = request.args.get('host')
