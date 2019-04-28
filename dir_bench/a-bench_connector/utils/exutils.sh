@@ -38,3 +38,15 @@ function exutils_minikube_getDataServiceNamePort {
                 awk '{print $6}' | awk -F ':|/' '{print $2}')"
     echo "$nodeIP:$servicePort"
 }
+
+function exutils_auto_collectMeasurementsToZip {
+    experiment_start=$1
+    experiment_end=$2
+    exportDirectory=$3
+    exportFileName=$4
+    mkdir -p $exportDirectory
+    ab_exportDirectory=$(readlink -f $exportDirectory)
+
+    echo $experiment_start $experiment_end "$ab_exportDirectory/$exportFileName.zip"
+    exutils_collectMeasurements_FromT_ToT_csv_zip $experiment_start $experiment_end "$ab_exportDirectory/$exportFileName.zip"
+}
