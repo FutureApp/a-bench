@@ -89,7 +89,7 @@ case  $var  in
     
     data_location="./exo001.xlsx"
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client) # Port of the service is dynamic, therefore this query
-    url="http://$ipxport_data_client/test/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
+    url="http://$ipxport_data_client/xlsx?host=monitoring-influxdb&port=8086&dbname=k8s&filename=hello&lTimeBorder=$s_time&rTimeBorder=$e_time"
 
     echo "Calling the following URl <$url>"
     curl "$url" --output $data_location
