@@ -49,7 +49,7 @@ case  $var  in
     end_time=$(exutils_UTC_TimestampInNanos)
     auto_collectMeasurementsToZip $start_time $end_time ~ $ex_tag
     
-    ./$0 cus_collect $start_time $end_time ~ 
+    ./$0 cus_collect $start_time $end_time ~ $ex_tag
     ./$0 cus_clean
     ./$0 cus_finish
 ;;
