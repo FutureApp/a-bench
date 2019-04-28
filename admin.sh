@@ -81,8 +81,8 @@ case  $var  in
     linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&srefresh=10s"
 
     # opens some dash-boards    
-    xdg-open $linkToDashboard
-    minikube dashboard
+    xdg-open $linkToDashboard &
+    minikube dashboard &
 
     # downloads the sub-module bbv2
     ./$0 down_subproject
