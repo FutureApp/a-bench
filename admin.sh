@@ -133,7 +133,7 @@ case  $var  in
 ;;
 
 (dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
-    ./$0 dev_code
+    #./$0 dev_code
     s_time=$(bench_UTC_TimestampInNanos)
     util_sleep 2
     e_time=$(bench_UTC_TimestampInNanos)

@@ -8,6 +8,8 @@ import influxdb as idb
 import pandas as pd
 
 import ZipWritero as zw
+from time import gmtime, strftime
+
 
 class QueryHandler():
     def __init__(self, saveDirectory):
@@ -36,11 +38,13 @@ class QueryHandler():
     def queryAndGetPathToResultsCVS(self, host, port, DBname, filePrefix, fromT, toT):
         print("queryAndGetPathToResults: called -- {} {} {} {} {} {}".format(
                 host, port, DBname, filePrefix, fromT, toT))
-        fileExportLocation      = "{}/{}.zip".format(self.saveDirectory, filePrefix)
+        timeprefix              = str(strftime("%Y_%m_%d__%H_%M_%S", gmtime()))
+        fileExportLocation      = "{}/{}_{}.zip".format(self.saveDirectory,timeprefix, filePrefix)
         realClient              = idb.InfluxDBClient(host = host, port = port)
         realClient.switch_database(database = DBname)
 
         listOfMeasurements      = realClient.get_list_measurements()
+        
         print("export to {}".format(fileExportLocation))
         print("Founds <{}> measurements in total. Gathering will start now.".format(len(listOfMeasurements)))
         
