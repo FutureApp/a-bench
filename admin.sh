@@ -36,7 +36,7 @@ case  $var  in
     bench_preflight
     
     minikube delete 
-    minikube start --cpus 8 --memory 8192 || \
+    minikube start --cpus 4 --memory 4096 || \
         (   echo "ERROR. Check the error-message, resolve the problem and then try again." && \
             exit 1)
     
