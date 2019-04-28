@@ -10,6 +10,7 @@ function exutils_collectMeasurements_FromT_ToT_csv_zip {
     exportFile=$3
 
     urlToCall=$(exutils_createCollectingURLForExperiment $start_time $end_time)
+    echo "calling url <$urlToCall>"
     curl "$urlToCall" --output $exportFile
     echo "Datacollection finished. Export located at <$exportFile>"
 }

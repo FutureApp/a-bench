@@ -8,8 +8,7 @@ import influxdb as idb
 import pandas as pd
 
 import ZipWritero as zw
-from time import gmtime, strftime
-
+import datetime
 
 class QueryHandler():
     def __init__(self, saveDirectory):
@@ -18,7 +17,8 @@ class QueryHandler():
     def queryAndGetPathToResultsXLSX(self, host, port, DBname, filePrefix, fromT, toT):
         print("queryAndGetPathToResults: called -- {} {} {} {} {} {}".format(
                 host, port, DBname, filePrefix, fromT, toT))   
-        fileExportLocation      = "{}/{}.xlsx".format(self.saveDirectory, filePrefix)
+        timeprefix              = str(datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S_%f"))
+        fileExportLocation      = "{}/{}_{}.xlsx".format(self.saveDirectory, timeprefix, filePrefix)
         realClient              = idb.InfluxDBClient(host = host, port = port)
         realClient.switch_database(database = DBname)
 
@@ -38,7 +38,8 @@ class QueryHandler():
     def queryAndGetPathToResultsCVS(self, host, port, DBname, filePrefix, fromT, toT):
         print("queryAndGetPathToResults: called -- {} {} {} {} {} {}".format(
                 host, port, DBname, filePrefix, fromT, toT))
-        timeprefix              = str(strftime("%Y_%m_%d__%H_%M_%S", gmtime()))
+        timeprefix              = str(datetime.datetime.now().strftime("%Y_%m_%d__%H_%M_%S_%f"))
+        print("TIME" + str(timeprefix))
         fileExportLocation      = "{}/{}_{}.zip".format(self.saveDirectory,timeprefix, filePrefix)
         realClient              = idb.InfluxDBClient(host = host, port = port)
         realClient.switch_database(database = DBname)
@@ -47,7 +48,6 @@ class QueryHandler():
         
         print("export to {}".format(fileExportLocation))
         print("Founds <{}> measurements in total. Gathering will start now.".format(len(listOfMeasurements)))
-        
         exportZipFile   = zp.ZipFile(fileExportLocation,'a')
         for measurement in listOfMeasurements:
             nameOfMeas          = measurement['name']
@@ -62,7 +62,6 @@ class QueryHandler():
 
     def makeDBQueryForDataPoints(self, client, nameofmeas,fromT,toT):
         query               = 'SELECT * FROM "{}" WHERE time >= {} AND time <= {}'.format(nameofmeas, fromT ,toT)
-        query               = 'SELECT * FROM "{}"'.format(nameofmeas, fromT ,toT)
         points              = client.query(query, chunked=True, chunk_size=10000).get_points()
         resDataFrame        = pd.DataFrame(points)
         return resDataFrame
