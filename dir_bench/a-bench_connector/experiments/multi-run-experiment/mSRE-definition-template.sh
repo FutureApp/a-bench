@@ -5,14 +5,13 @@ RR='\033[1;31m'
 NC='\033[0m' # No Color
 
 # dep-locations
-exutils="../../../utils/exutils.sh"
+exutils="../../utils/exutils.sh"
 
 # imports
 source $exutils
 
 
 bench_tag=${LB}[A-Bench]${NC}
-ex_tag="template_ex"
 
 if [[ $# -eq 0 ]] ; then
     ./$0 --help
@@ -27,31 +26,36 @@ case  $var  in
 (run_ex) #                  -- ProcFedure to run the experiment described by the steps below. 
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
-    ./$0 cus_prepare
+    callerExportDirectory=${2:-"./"}
+    exTag=${3:-unkown3}
+    exRunID=${4:-unkown4}
+    exportLocationOfExperiment=$callerExportDirectory/$exRunID
+    echo -e "$bench_tag --------------------------------------------------- [mSRE -$exRunID- S] "
+    
+    echo  $exportLocationOfExperiment
+    ./$0 mSRE_prepare
 
     start_time=$(exutils_UTC_TimestampInNanos)
-    ./$0 cus_workload
+    ./$0 mSRE_workload 
     end_time=$(exutils_UTC_TimestampInNanos)
-    exutils_auto_collectMeasurementsToZip $start_time $end_time ~ $ex_tag
+    exutils_auto_collectMeasurementsToZip $start_time $end_time $exportLocationOfExperiment $exTag
     
-    ./$0 cus_collect $start_time $end_time ~ $ex_tag
-    ./$0 cus_clean
-    ./$0 cus_finish
+    ./$0 mSRE_collect $start_time $end_time $exportLocationOfExperiment $exTag
+    ./$0 mSRE_clean
+    echo -e "$bench_tag --------------------------------------------------- [mSRE -$exRunID- E] "
+
 ;;
 #----------------------------------------------------------------------------[ Experiment-Functions ]--
-(cus_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
-    echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare"
+(mSRE_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
+    echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR mSRE_prepare"
 #    //TODO Your code comes here 
 ;;
-(cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
-    echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
-    
-#   ----------------------------------------------
-#    //TODO Your code comes here 
-#   ----------------------------------------------    
+(mSRE_workload) #            -- Procedure to run the experiment related workload.     via custom script.
+    echo -e "$bench_tag Executing the workload of the experiment.           | $RR mSRE_workload $NC"
+
 ;;
-(cus_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
-    echo -e "$bench_tag Downloading the results of the experiment.          | $RR cus_collect $NC"
+(mSRE_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
+    echo -e "$bench_tag Downloading the results of the experiment.          | $RR mSRE_collect $NC"
     # Variables which are available for you at runtime. 
     experiment_start=$2
     experiment_end=$3
@@ -60,10 +64,11 @@ case  $var  in
 
 #    //TODO Your code comes here 
 ;;
-(cus_clean) #               -- Procedure to clean up the enviroment if needed        via custom script.
-    echo -e "$bench_tag Cleaning the infrastructure.                        | $RR cus_clean $NC"
+(mSRE_clean) #               -- Procedure to clean up the enviroment if needed        via custom script.
+    echo -e "$bench_tag Cleaning the infrastructure.                        | $RR mSRE_clean $NC"
 #    //TODO Your code comes here 
 ;;
+ 
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
     echo -e  "${bench} USAGE $var <case>"
