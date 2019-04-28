@@ -69,3 +69,17 @@ function exutils_relResultDirPath()
     # Return
     echo $pathToCollectDir
 }
+
+function exutils_dynmic_helpByCodeParse {
+    # Greetings to Ma_Sys.ma -- https://github.com/m7a --
+    # The original code-snipped bellow and the switch-case file structure was implemented by him .  
+    echo -e  "${bench} USAGE $var <case>"
+    echo -e 
+    echo -e  The following cases are available:
+    echo -e 
+    # An intelligent means of printing out all cases available and their
+ 	# section. WARNING: -E is not portable!
+    grep -E '^(#--+\[ |\([a-zA-Z_\|\*-]+\))' < "$0" | cut -c 2- | \
+    sed -E -e 's/--+\[ (.+) \]--/\1/g' -e 's/(.*)\)$/ * \1/g' \
+    -e 's/(.*)\) # (.*)/ * \1 \2/g'
+}

@@ -38,7 +38,7 @@ case  $var  in
     pathToCollectDir=$(exutils_relResultDirPath $home_framework)
     echo $pathToCollectDir
     start_time=$(exutils_UTC_TimestampInNanos)
-    ./$0 call_mSRE $pathToCollectDir $mSRE_iterations
+    #./$0 MRE_run $pathToCollectDir $mSRE_iterations
     end_time=$(exutils_UTC_TimestampInNanos)
     exutils_auto_collectMeasurementsToZip $start_time $end_time $pathToCollectDir $ex_tag
     
@@ -59,7 +59,7 @@ case  $var  in
     echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR MRE_prepare"
 #    //TODO Your code comes here 
 ;;
-(call_mSRE) #            -- Procedure to run the experiment related workload.     via custom script.
+(MRE_run) #            -- Procedure to run the experiment related workload.     via custom script.
     echo -e "$bench_tag Executing the workload of the experiment.           | $RR call_mSRE $NC"
     pathDataToCollectTo=$2
     numberOfIterations=$3
