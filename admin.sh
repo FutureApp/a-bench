@@ -34,9 +34,10 @@ case  $var  in
 ;;
 (senv_a) #                      -- Starts the framework-env in configuration A with kubernetes and minikube
     bench_preflight
-    
+    numberCPUs=${2:-4}      # Sets default value 4 CPUs
+    numberMemory=${3:-6144} # Sets default value 6144 MB
     minikube delete 
-    minikube start --cpus 4 --memory 6144 || \
+    minikube start --cpus $numberCPUs --memory $numberMemory || \
         (   echo "ERROR. Check the error-message, resolve the problem and then try again." && \
             exit 1)
     
@@ -105,14 +106,14 @@ case  $var  in
     ./$0 run_sample_mre_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
-
-#------------------------------------------------------------------------------------------[ Custom ]--
+#-----------------------------------------------------------------------------------------[ Modules ]--
 # Here is a good place to insert code which interacts with your framework or benchmark
 (down_submodules) #             -- Downloads your custom-benchmark or framework
     mkdir -p submodules
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
 ;;
+#----------------------------------------------------------------------------------[ Custom-runners ]--
 (run_sample_sre_bbv) #          -- Executes the experi01.sh experiment from bigbenchv2
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
     bash SRE_experiment_demoHIVE.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
