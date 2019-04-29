@@ -24,7 +24,7 @@ do
 case  $var  in
 
 #--------------------------------------------------------------------------------------[ Experiment ]--
-(run_ex) #                  -- ProcFedure to run the experiment described by the steps below. 
+(run_ex) #                  -- Procedure to run the experiment described by the steps below. 
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
     ./$0 cus_build
