@@ -92,15 +92,7 @@ case  $var  in
 ;;
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
-    echo -e  "${bench} USAGE $var <case>"
-    echo -e 
-    echo -e  The following cases are available:
-    echo -e 
-    # An intelligent means of printing out all cases available and their
- 	# section. WARNING: -E is not portable!
-    grep -E '^(#--+\[ |\([a-z_\|\*-]+\))' < "$0" | cut -c 2- | \
-    sed -E -e 's/--+\[ (.+) \]--/\1/g' -e 's/(.*)\)$/ * \1/g' \
-    -e 's/(.*)\) # (.*)/ * \1 \2/g'
+    exutils_dynmic_helpByCodeParse
 ;;
 esac     
 done
