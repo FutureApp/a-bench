@@ -46,7 +46,7 @@ function bench_installMissingComponents {
     done
     existendComponents=$((checkedComponents - newComponent))
     echo -e "$bench_tag $existendComponents/$checkedComponents programs are already installed. $newComponent new installed programs."
-    echo -e "$bench_tag Please restart your computer to complete the process, now."
+    echo -e "$bench_tag Please restart your computer to complete the process."
 
 }
 

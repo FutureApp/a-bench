@@ -73,10 +73,9 @@ case  $var  in
 ;;
 
 #----------------------------------------------------------------------------------------[ Examples ]--
-(demo_from_scratch) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
+(demo_from_scratch_sre) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
     ./$0 senv_a
     sleep 15
-    export_file_name="exo001.xlsx"
     mini_ip=$(minikube ip)
     linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&srefresh=10s"
 
@@ -87,18 +86,24 @@ case  $var  in
     # downloads the sub-module bbv2
     ./$0 down_subproject
     # experiment execution
-    s_time=$(bench_UTC_TimestampInNanos)
-    ./$0 run_sample
-    e_time=$(bench_UTC_TimestampInNanos)
-    util_sleep 60 # Gives the System some time to write all mes-data into the influxdb - instance
-    
-    data_location="./experiment01.zip"
-    ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client) # Port of the service is dynamic, therefore this query
-    url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+    ./$0 run_sample_sre_bbv
+    #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+;;
+(demo_from_scratch_mre) #           -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
+    ./$0 senv_a
+    sleep 15
+    mini_ip=$(minikube ip)
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&srefresh=10s"
 
-    echo "Calling the following URl <$url>"
-    curl "$url" --output $data_location
-    echo "Data is saved under $data_location"
+    # opens some dash-boards    
+    xdg-open $linkToDashboard &
+    minikube dashboard &
+
+    # downloads the sub-module bbv2
+    ./$0 down_subproject
+    # experiment execution
+    ./$0 run_sample_mre_bbv
+    #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 
 #------------------------------------------------------------------------------------------[ Custom ]--
@@ -108,9 +113,13 @@ case  $var  in
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
 ;;
-(run_sample) #                  -- Executes the experi01.sh experiment from bigbenchv2
+(run_sample_sre_bbv) #                  -- Executes the experi01.sh experiment from bigbenchv2
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
-    bash experiment01.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
+    bash SRE_experiment_demoHIVE.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
+;;
+(run_sample_mre_bbv) #                  -- Executes the experi01.sh experiment from bigbenchv2
+    cd submodules/bigbenchv2/a-bench_connector/experiments/multi-run-experiment/
+    bash MRE_experiment_demoHIVE.sh run_ex 2 # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
 (dev_hacky) #                   -- Hacky-Code
