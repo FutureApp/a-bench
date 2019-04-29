@@ -78,7 +78,7 @@ case  $var  in
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
-    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&srefresh=10s"
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&refresh=10s"
 
     # opens some dash-boards    
     xdg-open $linkToDashboard &
@@ -94,7 +94,7 @@ case  $var  in
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
-    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&srefresh=10s"
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&refresh=10s"
 
     # opens some dash-boards    
     xdg-open $linkToDashboard &
@@ -123,13 +123,8 @@ case  $var  in
     bash MRE_experiment_demoHIVE.sh run_ex 2 # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
-(dev_hacky) #                   -- Hacky-Code
-    echo "Hacky got triggered"
-    echo "Param 0 $0"
-    echo "Param 1 $1"
-    echo "Param 2 $2"
-;;
-(dev_code) #                    -- Executes dev-code Development-purpose
+
+(dev_code) #                    -- Executes dev-related code.
     docker rmi -f data-server
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
@@ -142,7 +137,7 @@ case  $var  in
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
 ;;
 
-(dev_pcc) #                     -- Executes the process to collect some measurements from the data-client
+(dev_pcc) #                     -- Executes dev-related code for testing code-snipped's
     ./$0 dev_code
     s_time=$(bench_UTC_TimestampInNanos)
     util_sleep 10
