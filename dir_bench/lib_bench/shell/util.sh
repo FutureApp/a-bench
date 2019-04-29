@@ -3,6 +3,8 @@
 # Prints a dynamic help-message derived from the calling script. 
 # Don't forget that the script must have to be in a specific format, otherwise
 # the message will not show the expected result. Have fun!
+# Greetings to Ma_Sys.ma -- https://github.com/m7a --
+# The code-snipped was implemented by him.
 function util_print_help () {
     echo -e  "${bench} USAGE $var <case>"
     echo -e 
