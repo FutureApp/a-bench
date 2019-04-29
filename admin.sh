@@ -28,7 +28,7 @@ fi
 for var in "$1"
 do
 case  $var  in
-#------------------------------------------------------------------------------------[ ABench - prim ]--
+#---------------------------------------------------------------------[ ABench - Test infrastructure ]--
 (auto_install) #                -- Triggers the scripts to automatically install all necessary components
     bench_installMissingComponents 
 ;;
@@ -73,7 +73,7 @@ case  $var  in
 ;;
 
 #----------------------------------------------------------------------------------------[ Examples ]--
-(demo_from_scratch_sre) #       -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
+(demo_from_scratch_sre) #       -- Deploys the (config A)-environment and executes a single-run-experiment based on bigbenchv2
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -84,12 +84,12 @@ case  $var  in
     minikube dashboard &
 
     # downloads the sub-module bbv2
-    ./$0 down_subproject
+    ./$0 down_submodules
     # experiment execution
     ./$0 run_sample_sre_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
-(demo_from_scratch_mre) #       -- Installs a complete infrastructure and runs a sample benchmark-experiment via bigbenchV2
+(demo_from_scratch_mre) #       -- Deploys the (config A)-environment and executes a multi-run-experiment based on bigbenchv2
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -100,7 +100,7 @@ case  $var  in
     minikube dashboard &
 
     # downloads the sub-module bbv2
-    ./$0 down_subproject
+    ./$0 down_submodules
     # experiment execution
     ./$0 run_sample_mre_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
@@ -108,7 +108,7 @@ case  $var  in
 
 #------------------------------------------------------------------------------------------[ Custom ]--
 # Here is a good place to insert code which interacts with your framework or benchmark
-(down_subproject) #             -- Downloads your custom-benchmark or framework
+(down_submodules) #             -- Downloads your custom-benchmark or framework
     mkdir -p submodules
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
