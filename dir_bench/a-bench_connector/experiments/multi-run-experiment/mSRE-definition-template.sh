@@ -32,7 +32,6 @@ case  $var  in
     exportLocationOfExperiment=$callerExportDirectory/$exRunID
     echo -e "$bench_tag --------------------------------------------------- [mSRE -$exRunID- S] "
     
-    echo  $exportLocationOfExperiment
     ./$0 mSRE_prepare
 
     start_time=$(exutils_UTC_TimestampInNanos)
