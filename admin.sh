@@ -114,11 +114,11 @@ case  $var  in
     git clone https://github.com/FutureApp/bigbenchv2.git
 ;;
 #----------------------------------------------------------------------------------[ Custom-runners ]--
-(run_sample_sre_bbv) #          -- Executes the experi01.sh experiment from bigbenchv2
+(run_sample_sre_bbv) #          -- Executes the SRE_experiment_demoHIVE.sh experiment from bigbenchv2
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
     bash SRE_experiment_demoHIVE.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
-(run_sample_mre_bbv) #          -- Executes the experi01.sh experiment from bigbenchv2
+(run_sample_mre_bbv) #          -- Executes the MRE_experiment_demoHIVE.sh experiment from bigbenchv2 two times
     cd submodules/bigbenchv2/a-bench_connector/experiments/multi-run-experiment/
     bash MRE_experiment_demoHIVE.sh run_ex 2 # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
