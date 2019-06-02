@@ -28,10 +28,12 @@ fi
 for var in "$1"
 do
 case  $var  in
-#---------------------------------------------------------------------[ ABench - Test infrastructure ]--
+#--------------------------------------------------------------------------------[ ABench - Presteps ]--
 (auto_install) #                -- Triggers the scripts to automatically install all necessary components
     bench_installMissingComponents 
 ;;
+
+#---------------------------------------------------------------------[ ABench - Infrastructure ]--
 (senv_a) #                      -- Starts the framework-env in configuration A with kubernetes and minikube
     bench_preflight
     numberCPUs=${2:-4}      # Sets default value 4 CPUs
@@ -48,6 +50,9 @@ case  $var  in
                                 -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y)
     util_sleep 10
     eval $(minikube docker-env) 
+    minikube addons enable addon-manager
+    minikube addons enable dashboard
+    minikube addons enable storage-provisioner   
     minikube addons enable heapster
 
     helm init
@@ -70,8 +75,10 @@ case  $var  in
 ;;
 
 (senv_b) #                      -- Starts the framework-env in configuration B with cloud-infrastructure - not available right now -
-    echo "The framework in configuration B is not available right now."
+    echo "The framework doesn't support the configuration B (cloud-env) right now."
 ;;
+
+
 
 #----------------------------------------------------------------------------------------[ Examples ]--
 (demo_from_scratch_sre) #       -- Deploys the (config A)-environment and executes a single-run-experiment based on bigbenchv2
@@ -106,6 +113,23 @@ case  $var  in
     ./$0 run_sample_mre_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
+(demo_from_scratch_env) #       -- Deploys the (config A)-environment and executes a multi-run-experiment based on bigbenchv2
+    ./$0 senv_a
+    sleep 15
+    mini_ip=$(minikube ip)
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&refresh=10s"
+
+    # opens some dash-boards    
+    xdg-open $linkToDashboard &
+    minikube dashboard &
+
+    # downloads the sub-module bbv2
+    ./$0 down_submodules
+    experiment execution
+    
+    export TEST_QUERIES="1 5 10 15"; ./$0 run_by_env_bbv
+    #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+;;
 #-----------------------------------------------------------------------------------------[ Modules ]--
 # Here is a good place to insert code which interacts with your framework or benchmark
 (down_submodules) #             -- Downloads your custom-benchmark or framework
@@ -121,6 +145,22 @@ case  $var  in
 (run_sample_mre_bbv) #          -- Executes the MRE_experiment_demoHIVE.sh experiment from bigbenchv2 two times
     cd submodules/bigbenchv2/a-bench_connector/experiments/multi-run-experiment/
     bash MRE_experiment_demoHIVE.sh run_ex 2 # Contains the implementation of the experiment. Like build,deploy and execution orders.
+;;
+#----------------------------------------------------------------------------------------[ Executor ]--
+
+(run_by_env_bbv) #                   -- Performs a series of experiments defined by a system environment.
+    
+    TEST_QUERIES_TO_CALL=($TEST_QUERIES)
+    if [[ $TEST_QUERIES_TO_CALL -eq 0 ]] ; then
+        echo "Attention. No queries detected. Check the System-ENV."
+    else
+        echo "ENV-Looper-Experiment is starting now."
+        for test_query in ${TEST_QUERIES_TO_CALL[@]}; do
+            echo "Running $test_query"
+            # cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
+            # bash ENV_experiment_demoHIVE.sh run_ex  $currentExperiment
+        done
+    fi
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
 
