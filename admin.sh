@@ -126,9 +126,8 @@ case  $var  in
 
     # downloads the sub-module bbv2
     ./$0 down_submodules
-    experiment execution
     
-    export TEST_QUERIES="1 5 10 15"; ./$0 run_by_env_bbv
+    export TEST_QUERIES="27"; ./$0 run_by_env_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 #-----------------------------------------------------------------------------------------[ Modules ]--
@@ -158,8 +157,8 @@ case  $var  in
         echo "ENV-Looper-Experiment is starting now."
         for test_query in ${TEST_QUERIES_TO_CALL[@]}; do
             echo "Running $test_query"
-            # cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
-            # bash ENV_experiment_demoHIVE.sh run_ex  $currentExperiment
+            cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
+            bash ENV_experiment_demoHIVE.sh run_ex  $test_query
         done
     fi
 ;;
