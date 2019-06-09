@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#@ Author: Michael Czaja <michael-czaja-arbeit@hotmail.de>
 
 LB='\033[1;34m'
 RR='\033[1;31m'
