@@ -149,9 +149,8 @@ case  $var  in
 #----------------------------------------------------------------------------------------[ Executor ]--
 
 (run_by_env_bbv) #                   -- Performs a series of experiments defined by a system environment.
-    
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
-    if [[ $TEST_QUERIES_TO_CALL -eq 0 ]] ; then
+    if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
         echo "Attention. No queries detected. Check the System-ENV."
     else
         echo "ENV-Looper-Experiment is starting now."
