@@ -55,8 +55,17 @@ At the end of the experiment, the framework will gather all interesting performa
 
 ### Step X # Fast way
 
-Of course, there is a way to execute all steps above, excluded the first one, with a single command. Navigate to the root-directory of this project and execute the following code: Besides the 
+Of course, there is a way to execute all steps above, excluded the first one, with a single command. Navigate to the root-directory of this project and execute the following code:
 
 ``` sh
     ./admin.sh demo_from_scratch
+```
+
+### Enviroment-Variables by BBV2-Submodul
+
+The system handels two variables. These var's coming handy if you work with ENV_Experiments in bbv2. This VAR are used by the GUI of the system.
+
+``` sh
+    TEST_QUERIES="a b c d"  # Is used to order the sequenel execution of the given queries Works with bbv2
+    EX_TAG="Experiment-TAG" # Is used to define result-directory and result-filename of the experiment-output
 ```
