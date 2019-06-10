@@ -39,8 +39,9 @@ case  $var  in
     bench_preflight
     numberCPUs=${2:-4}      # Sets default value 4 CPUs
     numberMemory=${3:-6144} # Sets default value 6144 MB
+    numberDiskSizeGB="${4:-16}g"
     minikube delete 
-    minikube start --cpus $numberCPUs --memory $numberMemory || \
+    minikube start --cpus $numberCPUs --memory $numberMemory --disk-size $numberDiskSizeGB || \
         (   echo "ERROR. Check the error-message, resolve the problem and then try again." && \
             exit 1)
     
@@ -52,6 +53,7 @@ case  $var  in
     util_sleep 10
     eval $(minikube docker-env) 
     minikube addons enable addon-manager
+    minikube addons enable default-storageclass
     minikube addons enable dashboard
     minikube addons enable storage-provisioner   
     minikube addons enable heapster
@@ -96,7 +98,7 @@ case  $var  in
     ./$0 down_submodules
     # experiment execution
     ./$0 run_sample_sre_bbv
-    #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+    url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 (demo_from_scratch_mre) #       -- Deploys the (config A)-environment and executes a multi-run-experiment based on bigbenchv2
     ./$0 senv_a
@@ -127,7 +129,9 @@ case  $var  in
     # downloads the sub-module bbv2
     ./$0 down_submodules
     
-    export TEST_QUERIES="27"; ./$0 run_by_env_bbv
+    export TEST_QUERIES="q27"
+    export EX_TAG="experiment_tag_sample"
+    ./$0 run_by_env_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 #-----------------------------------------------------------------------------------------[ Modules ]--
@@ -151,7 +155,7 @@ case  $var  in
 (run_by_env_bbv) #                   -- Performs a series of experiments defined by a system environment.
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
     if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
-        echo "Attention. No queries detected. Check the System-ENV."
+        echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
     else
         echo "ENV-Looper-Experiment is starting now."
         for test_query in ${TEST_QUERIES_TO_CALL[@]}; do
