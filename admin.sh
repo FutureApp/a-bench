@@ -62,8 +62,11 @@ case  $var  in
     util_sleep 10
     # -----------
 
-    # start the influxDB-collector-client
-    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+    # starts the influxDB-collector-client
+    cd ./dir_bench/images/influxdb-client/image/ && \
+    docker pull jwgumcz/data-server:latest && \
+#   docker build -t data-server . && \
+    cd -
     kubectl apply  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
 
@@ -172,7 +175,10 @@ case  $var  in
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     util_sleep 60
-    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+    cd ./dir_bench/images/influxdb-client/image/ && \
+    #docker build -t data-server . && \
+    docker pull jwgumcz/data-server && \
+    cd -
     kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     
