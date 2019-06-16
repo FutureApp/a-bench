@@ -139,6 +139,8 @@ case  $var  in
     mkdir -p submodules
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
+    cd bigbenchv2 && git pull
+    echo "finish"
 ;;
 #----------------------------------------------------------------------------------[ Custom-runners ]--
 (run_sample_sre_bbv) #          -- Executes the SRE_experiment_demoHIVE.sh experiment from bigbenchv2
