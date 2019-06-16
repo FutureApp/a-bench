@@ -63,10 +63,6 @@ case  $var  in
     # -----------
 
     # starts the influxDB-collector-client
-    cd ./dir_bench/images/influxdb-client/image/ && \
-    docker pull jwgumcz/data-server:latest && \
-#   docker build -t data-server . && \
-    cd -
     kubectl apply  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
 
@@ -169,16 +165,20 @@ case  $var  in
     fi
 ;;
 #---------------------------------------------------------------------------------------------[ DEV ]--
+(dev_build_d) #  -- Builds all docker specific components. 
+    #builds the data-server componente
+    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && \
+    docker build -t jwgumcz/data-server . && \
+    cd -
 
+    # code to build other componentes belongs here
+;;
 (dev_code) #                    -- Executes dev-related code.
     docker rmi -f data-server
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     util_sleep 60
-    cd ./dir_bench/images/influxdb-client/image/ && \
-    #docker build -t data-server . && \
-    docker pull jwgumcz/data-server && \
-    cd -
+
     kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     

@@ -17,6 +17,6 @@ spec:
       - name: influxdb-client
         #FIXME Create abench repo 
         image: jwgumcz/data-server
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
