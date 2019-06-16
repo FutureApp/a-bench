@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#@ Author: Michael Czaja <michael-czaja-arbeit@hotmail.de>
 
 LB='\033[1;34m'
 RR='\033[1;31m'
@@ -28,16 +29,19 @@ fi
 for var in "$1"
 do
 case  $var  in
-#---------------------------------------------------------------------[ ABench - Test infrastructure ]--
+#--------------------------------------------------------------------------------[ ABench - Presteps ]--
 (auto_install) #                -- Triggers the scripts to automatically install all necessary components
     bench_installMissingComponents 
 ;;
+
+#---------------------------------------------------------------------[ ABench - Infrastructure ]--
 (senv_a) #                      -- Starts the framework-env in configuration A with kubernetes and minikube
     bench_preflight
     numberCPUs=${2:-4}      # Sets default value 4 CPUs
     numberMemory=${3:-6144} # Sets default value 6144 MB
+    numberDiskSizeGB="${4:-16}g"
     minikube delete 
-    minikube start --cpus $numberCPUs --memory $numberMemory || \
+    minikube start --cpus $numberCPUs --memory $numberMemory --disk-size $numberDiskSizeGB || \
         (   echo "ERROR. Check the error-message, resolve the problem and then try again." && \
             exit 1)
     
@@ -48,14 +52,17 @@ case  $var  in
                                 -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y)
     util_sleep 10
     eval $(minikube docker-env) 
+    minikube addons enable addon-manager
+    minikube addons enable default-storageclass
+    minikube addons enable dashboard
+    minikube addons enable storage-provisioner   
     minikube addons enable heapster
 
     helm init
     util_sleep 10
     # -----------
 
-    # start the influxDB-collector-client
-    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+    # starts the influxDB-collector-client
     kubectl apply  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
 
@@ -70,8 +77,10 @@ case  $var  in
 ;;
 
 (senv_b) #                      -- Starts the framework-env in configuration B with cloud-infrastructure - not available right now -
-    echo "The framework in configuration B is not available right now."
+    echo "The framework doesn't support the configuration B (cloud-env) right now."
 ;;
+
+
 
 #----------------------------------------------------------------------------------------[ Examples ]--
 (demo_from_scratch_sre) #       -- Deploys the (config A)-environment and executes a single-run-experiment based on bigbenchv2
@@ -88,7 +97,7 @@ case  $var  in
     ./$0 down_submodules
     # experiment execution
     ./$0 run_sample_sre_bbv
-    #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+    url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 (demo_from_scratch_mre) #       -- Deploys the (config A)-environment and executes a multi-run-experiment based on bigbenchv2
     ./$0 senv_a
@@ -104,6 +113,24 @@ case  $var  in
     ./$0 down_submodules
     # experiment execution
     ./$0 run_sample_mre_bbv
+    #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
+;;
+(demo_from_scratch_env) #       -- Deploys the (config A)-environment and executes a multi-run-experiment based on bigbenchv2
+    ./$0 senv_a
+    sleep 15
+    mini_ip=$(minikube ip)
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&refresh=10s"
+
+    # opens some dash-boards    
+    xdg-open $linkToDashboard &
+    minikube dashboard &
+
+    # downloads the sub-module bbv2
+    ./$0 down_submodules
+    
+    export TEST_QUERIES="q27"
+    export EX_TAG="experiment_tag_sample"
+    ./$0 run_by_env_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 #-----------------------------------------------------------------------------------------[ Modules ]--
@@ -122,14 +149,36 @@ case  $var  in
     cd submodules/bigbenchv2/a-bench_connector/experiments/multi-run-experiment/
     bash MRE_experiment_demoHIVE.sh run_ex 2 # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
-#---------------------------------------------------------------------------------------------[ DEV ]--
+#----------------------------------------------------------------------------------------[ Executor ]--
 
+(run_by_env_bbv) #                   -- Performs a series of experiments defined by a system environment.
+    TEST_QUERIES_TO_CALL=($TEST_QUERIES)
+    if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
+        echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
+    else
+        echo "ENV-Looper-Experiment is starting now."
+        for test_query in ${TEST_QUERIES_TO_CALL[@]}; do
+            echo "Running $test_query"
+            cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
+            bash ENV_experiment_demoHIVE.sh run_ex  $test_query
+        done
+    fi
+;;
+#---------------------------------------------------------------------------------------------[ DEV ]--
+(dev_build_d) #  -- Builds all docker specific components. 
+    #builds the data-server componente
+    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && \
+    docker build -t jwgumcz/data-server . && \
+    cd -
+
+    # code to build other componentes belongs here
+;;
 (dev_code) #                    -- Executes dev-related code.
     docker rmi -f data-server
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     util_sleep 60
-    cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && cd -
+
     kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     
