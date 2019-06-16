@@ -1,4 +1,3 @@
 # Location-explanation
 
-
-* Place here the chart implementation of your benchmark in order to run you benchmark via helm.
+* Place here the implementation of your chart corresponding to your benchmark in order to run your benchmark via helm.
