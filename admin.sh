@@ -65,7 +65,6 @@ case  $var  in
     # starts the influxDB-collector-client
     kubectl apply  -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
-
     kubernetes_waitUntilAllPodsAvailable 11 40 10 # expected containers; retrys; sleep-time[s]
     #### END
     echo -e     "${bench_tag} Startup procedure was successfully."
@@ -128,7 +127,7 @@ case  $var  in
     # downloads the sub-module bbv2
     ./$0 down_submodules
     
-    export TEST_QUERIES="q27"
+    export TEST_QUERIES="q29"
     export EX_TAG="experiment_tag_sample"
     ./$0 run_by_env_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
