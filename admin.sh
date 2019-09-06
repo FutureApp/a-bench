@@ -38,7 +38,7 @@ case  $var  in
 (senv_a) #                      -- Starts the framework-env in configuration A with kubernetes and minikube
     bench_preflight
     numberCPUs=${2:-4}      # Sets default value 4 CPUs
-    numberMemory=${3:-6144} # Sets default value 6144 MB
+    numberMemory=${3:-8000} # Sets default value 6144 MB
     numberDiskSizeGB="${4:-16}g"
     minikube delete 
     minikube start --cpus $numberCPUs --memory $numberMemory --disk-size $numberDiskSizeGB || \
