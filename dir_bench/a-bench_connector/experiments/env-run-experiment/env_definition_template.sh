@@ -73,7 +73,7 @@ case  $var  in
 ;;
 #----------------------------------------------------------------------------[ Experiment-Functions ]--
 (cus_build) #               -- Procedure to build your kube infrastructure (docker). via custom script.
-    echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_build $NC"
+    echo -e "$bench_tag System is building the infrastructure of the experiment.     | $RR cus_build $NC"
 #    //TODO Your code comes here 
 ;;
 (cus_deploy) #              -- Procedure to deploy your benchmark on kubernetes.     via custom script.

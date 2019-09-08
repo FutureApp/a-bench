@@ -75,14 +75,14 @@ case  $var  in
                 """
 ;;
 
-(senv_b) #                      -- Starts the framework-env in configuration B with cloud-infrastructure - not available right now -
+(senv_b) #                      -- Starts the framework-env. in configuration B within a cloud-infrastructure - not supported-
     echo "The framework doesn't support the configuration B (cloud-env) right now."
 ;;
 
 
 
 #----------------------------------------------------------------------------------------[ Examples ]--
-(demo_from_scratch_sre) #       -- Deploys the (config A)-environment and executes a single-run-experiment based on bigbenchv2
+(demo_from_scratch_sre) #       -- Deploys the (config A)-environment;Executes a single-run-experiment specification from the BBV2-Modul
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -98,7 +98,7 @@ case  $var  in
     ./$0 run_sample_sre_bbv
     url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
-(demo_from_scratch_mre) #       -- Deploys the (config A)-environment and executes a multi-run-experiment based on bigbenchv2
+(demo_from_scratch_mre) #       -- Deploys the (config A)-environment; Executes a multi-run-experiment specification from the BBV2-Modul
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -114,7 +114,7 @@ case  $var  in
     ./$0 run_sample_mre_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
-(demo_from_scratch_env) #       -- Deploys the (config A)-environment and executes a multi-run-experiment based on bigbenchv2
+(demo_from_scratch_env) #       -- Deploys the (config A)-environment; Executes a env-run-experiment specification from the BBV2-Modul
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -133,13 +133,13 @@ case  $var  in
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 #-----------------------------------------------------------------------------------------[ Modules ]--
-# Here is a good place to insert code which interacts with your framework or benchmark
+# Here is a good place to insert code which download your framework or benchmark
 (down_submodules) #             -- Downloads your custom-benchmark or framework
     mkdir -p submodules
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
     cd bigbenchv2 && git pull
-    echo "finish"
+    echo "Download has finished"
 ;;
 #----------------------------------------------------------------------------------[ Custom-runners ]--
 (run_sample_sre_bbv) #          -- Executes the SRE_experiment_demoHIVE.sh experiment from bigbenchv2
@@ -150,9 +150,13 @@ case  $var  in
     cd submodules/bigbenchv2/a-bench_connector/experiments/multi-run-experiment/
     bash MRE_experiment_demoHIVE.sh run_ex 2 # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
+(run_sample_sre_spark) #        -- Executes the SRE_experiment_demoSPARK.sh experiment from bigbenchv2
+    cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
+    bash SRE_experiment_demoSPARK.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
+;;
 #----------------------------------------------------------------------------------------[ Executor ]--
 
-(run_by_env_bbv) #                   -- Performs a series of experiments defined by a system environment.
+(run_by_env_bbv) #              -- Performs a series of experiments defined by a system environment. +BBV+
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
     if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
         echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
@@ -162,6 +166,19 @@ case  $var  in
             echo "Running $test_query"
             cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
             bash ENV_experiment_demoHIVE.sh run_ex  $test_query
+        done
+    fi
+;;
+(run_by_env_spark) #            -- Performs a series of experiments defined by a system environment. +SPARK+
+    TEST_QUERIES_TO_CALL=($TEST_QUERIES)
+    if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
+        echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
+    else
+        echo "ENV-Looper-Experiment is starting now."
+        for test_query in ${TEST_QUERIES_TO_CALL[@]}; do
+            echo "Running $test_query"
+            cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
+            bash ENV_experiment_demoSPARK.sh run_ex  $test_query
         done
     fi
 ;;
