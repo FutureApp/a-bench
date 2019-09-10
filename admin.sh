@@ -127,7 +127,7 @@ case  $var  in
     # downloads the sub-module bbv2
     ./$0 down_submodules
     
-    export TEST_QUERIES="q29"
+    export TEST_QUERIES="q16"
     export EX_TAG="experiment_tag_sample"
     ./$0 run_by_env_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
