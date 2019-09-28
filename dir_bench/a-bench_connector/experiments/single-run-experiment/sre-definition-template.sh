@@ -23,7 +23,7 @@ for var in "$1"
 do
 case  $var  in
 
-#--------------------------------------------------------------------------------------[ Experiment ]--
+#---------------------------------------------------------------------------------[ Experiment ]--
 (run_ex) #                  -- Procedure to run the experiment described by the steps below. 
     echo -e "Experiment TAG: #$ex_tag"
     echo -e "$bench_tag Running defined experiment... "
@@ -40,28 +40,32 @@ case  $var  in
     ./$0 cus_clean
     ./$0 cus_finish
 ;;
-#----------------------------------------------------------------------------[ Experiment-Functions ]--
-(cus_build) #               -- Procedure to build your kube infrastructure (docker). via custom script.
-    echo -e "$bench_tag System is building the infrastructure of the experiment.     | $RR cus_build $NC"
+#-----------------------------------------------------------------------[ Experiment-Functions ]--
+(cus_build) #          -- Procedure to build your kube infrastructure (docker). via custom script.
+    echo -e \
+    "$bench_tag System is building the infrastructure of the experiment.     | $RR cus_build $NC"
 #    //TODO Your code comes here 
 ;;
-(cus_deploy) #              -- Procedure to deploy your benchmark on kubernetes.     via custom script.
+(cus_deploy) #         -- Procedure to deploy your benchmark on kubernetes.     via custom script.
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR cus_deploy $NC"
 #    //TODO Your code comes here 
 ;;
-(cus_prepare) #             -- Procedure to prepare a running enviroment.            via custom script.
-    echo -e "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare"
+(cus_prepare) #        -- Procedure to prepare a running enviroment.            via custom script.
+    echo -e \
+    "$bench_tag Preparing the infrastructure for the workloads.     | $RR cus_prepare"
 #    //TODO Your code comes here 
 ;;
-(cus_workload) #            -- Procedure to run the experiment related workload.     via custom script.
-    echo -e "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
+(cus_workload) #       -- Procedure to run the experiment related workload.     via custom script.
+    echo -e \
+    "$bench_tag Executing the workload of the experiment.           | $RR cus_workload $NC"
     
 #   ----------------------------------------------
 #    //TODO Your code comes here 
 #   ----------------------------------------------    
 ;;
-(cus_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
-    echo -e "$bench_tag Downloading the results of the experiment.          | $RR cus_collect $NC"
+(cus_collect) #        -- Procedure to collect the results of the experiment.   via custom script.
+    echo -e \
+    "$bench_tag Downloading the results of the experiment.          | $RR cus_collect $NC"
     # Variables which are available for you at runtime. 
     experiment_start=$2
     experiment_end=$3
@@ -70,15 +74,17 @@ case  $var  in
 
 #    //TODO Your code comes here 
 ;;
-(cus_clean) #               -- Procedure to clean up the enviroment if needed        via custom script.
-    echo -e "$bench_tag Cleaning the infrastructure.                        | $RR cus_clean $NC"
+(cus_clean) #          -- Procedure to clean up the enviroment if needed        via custom script.
+    echo -e \
+    "$bench_tag Cleaning the infrastructure.                        | $RR cus_clean $NC"
 #    //TODO Your code comes here 
 ;;
-(cus_finish) #              -- Procedure to signal that the experiment has finished. via custom script.   
-    echo -e "$bench_tag Experiment finished.                                | $RR cus_finish $NC"
+(cus_finish) #         -- Procedure to signal that the experiment has finished. via custom script.   
+    echo -e \
+    "$bench_tag Experiment finished.                                | $RR cus_finish $NC"
 #    //TODO Your code comes here 
 ;;
-#--------------------------------------------------------------------------------------------[ Help ]--
+#---------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
     exutils_dynmic_helpByCodeParse
 ;;
