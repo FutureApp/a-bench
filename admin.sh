@@ -30,15 +30,15 @@ for var in "$1"
 do
 case  $var  in
 #--------------------------------------------------------------------------------[ ABench - Presteps ]--
-(auto_install) #                -- Triggers the scripts to automatically install all necessary components
+(auto_install) #                -- Triggers all scripts to automatically install all necessary components.
     bench_installMissingComponents 
 ;;
 
 #---------------------------------------------------------------------[ ABench - Infrastructure ]--
-(senv_a) #                      -- Starts the framework-env in configuration A with kubernetes and minikube
+(senv_a) #                      -- Starts the framework-env in configuration A with kubernetes and minikube.
     bench_preflight
     numberCPUs=${2:-4}      # Sets default value 4 CPUs
-    numberMemory=${3:-8000} # Sets default value 6144 MB
+    numberMemory=${3:-6144} # Sets default value 6144 MB
     numberDiskSizeGB="${4:-16}g"
     minikube delete 
     minikube start --cpus $numberCPUs --memory $numberMemory --disk-size $numberDiskSizeGB || \
@@ -127,20 +127,25 @@ case  $var  in
     # downloads the sub-module bbv2
     ./$0 down_submodules
     
-    export TEST_QUERIES="q16"
-    export EX_TAG="experiment_tag_sample"
+    export TEST_QUERIES="q16" &&\
+    export EX_TAG="experiment_tag_sample" &&\
     ./$0 run_by_env_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
 #-----------------------------------------------------------------------------------------[ Modules ]--
 # Here is a good place to insert code which download your framework or benchmark
-(down_submodules) #             -- Downloads your custom-benchmark or framework
+(down_submodules) #             -- Downloads or updates all abench-modules.
+    ./$0 down_bbv_two
+    echo "Download has finished [down_all]"
+;;
+(down_bbv_two) #                -- Downloads or updates the bbv2-modul.
     mkdir -p submodules
     cd submodules
     git clone https://github.com/FutureApp/bigbenchv2.git
     cd bigbenchv2 && git pull
-    echo "Download has finished"
+    echo "Download has finished [bbv2-modul]"
 ;;
+
 #----------------------------------------------------------------------------------[ Custom-runners ]--
 (run_sample_sre_bbv) #          -- Executes the SRE_experiment_demoHIVE.sh experiment from bigbenchv2
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
@@ -154,9 +159,9 @@ case  $var  in
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
     bash SRE_experiment_demoSPARK.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
-#----------------------------------------------------------------------------------------[ Executor ]--
+#----------------------------------------------------------------------------------------[ API-Interface ]--
 
-(run_by_env_bbv) #              -- Performs a series of experiments defined by a system environment. +BBV+
+(run_by_env_bbv_hive) #         -- Performs series of experiments using the bbv2-modul +HIVE Enviroment+
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
     if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
         echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
@@ -168,8 +173,9 @@ case  $var  in
             bash ENV_experiment_demoHIVE.sh run_ex  $test_query
         done
     fi
+    cd -
 ;;
-(run_by_env_spark) #            -- Performs a series of experiments defined by a system environment. +SPARK+
+(run_by_env_bbv_spark) #        -- Performs series of experiments using the bbv2-modul +SPARK Enviroment+
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
     if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
         echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
@@ -181,15 +187,30 @@ case  $var  in
             bash ENV_experiment_demoSPARK.sh run_ex  $test_query
         done
     fi
+    cd -
 ;;
-#---------------------------------------------------------------------------------------------[ DEV ]--
-(dev_build_d) #  -- Builds all docker specific components. 
+#------------------------------------------------------------------------------[ Abench-Images ]--
+(build_all_dockerimages) #      -- Builds all docker-images below.
+    ./$0 dev_build_dataserver
+    ./$0 dev_build_bbv_two_modul
+;;
+(build_dataserver) #            -- Builds the image  abench data-server image. 
     #builds the data-server componente
     cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && \
     docker build -t jwgumcz/data-server . && \
     cd -
-
     # code to build other componentes belongs here
+;;
+(build_bbv_two_modul) #         -- Builds the image for the bbv2-modul. 
+    #builds the bbv2-modul image
+    ./$0 down_bbv_two
+    cd submodules/bigbenchv2/a-bench_connector/images/hive
+    docker build -t jwgumcz/abench_bbv2 .
+    cd -
+;;
+#---------------------------------------------------------------------------------------[ DEV ]--
+(dev_con) #                     -- Connects to the bench-driver pod  via kubernates-function 
+    kubectl exec -it thadoop-hadoop-bench-driver-0  bash
 ;;
 (dev_code) #                    -- Executes dev-related code.
     docker rmi -f data-server
@@ -203,7 +224,6 @@ case  $var  in
     util_sleep 60
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
 ;;
-
 (dev_pcc) #                     -- Executes dev-related code for testing code-snipped's
     ./$0 dev_code
     s_time=$(bench_UTC_TimestampInNanos)
