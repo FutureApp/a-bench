@@ -175,7 +175,7 @@ case  $var  in
     fi
     cd -
 ;;
-(run_by_env_bbv_spark) #        -- Performs a series of experiments using the bbv2-module+SPARK Enviroment+
+(run_by_env_bbv_spark) #        -- Performs a series of experiments using the bbv2-module +SPARK Enviroment+
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
     if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
         echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
@@ -194,14 +194,14 @@ case  $var  in
     ./$0 dev_build_dataserver
     ./$0 dev_build_bbv_two_modul
 ;;
-(build_dataserver) #            -- Builds the image  abench data-server image
+(build_dataserver) #            -- Builds the basis image of the abench data-server
     #builds the data-server componente
     cd ./dir_bench/images/influxdb-client/image/ && docker build -t data-server . && \
     docker build -t jwgumcz/data-server . && \
     cd -
     # code to build other componentes belongs here
 ;;
-(build_bbv_two_modul) #         -- Builds the image for the bbv2-module 
+(build_bbv_two_modul) #         -- Builds the basis image of the bbv2-module 
     #builds the bbv2-modul image
     ./$0 down_bbv_two
     cd submodules/bigbenchv2/a-bench_connector/images/hive
