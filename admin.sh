@@ -209,7 +209,7 @@ case  $var  in
     cd -
 ;;
 #---------------------------------------------------------------------------------------[ DEV ]--
-(dev_con) #                     -- Connects to the bench-driver pod  via kubernates-function 
+(dev_con) #                     -- Connects to the bench-driver pod via kubernates-function 
     kubectl exec -it thadoop-hadoop-bench-driver-0  bash
 ;;
 (dev_code) #                    -- Executes dev-related code.
