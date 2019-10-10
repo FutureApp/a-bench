@@ -8,7 +8,6 @@ mkdir -p ~/wd/abench &&
 cd ./wd/abench &&
 git clone https://github.com/FutureApp/a-bench.git && \
 cd a-bench && bash admin.sh auto_install && \
-exec sudo su -l $USER &&\
 chmod +x admin.sh &&\
 end_install=(date +%s) &&\
 bash admin.sh senv_a &&\
