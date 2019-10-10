@@ -23,7 +23,12 @@ First, download this Repository and navigate to the root of this project where y
 If you have a working minikube-instance and helm-support then you can skip to step 2. If not, then run the follwing code to install the enviroment which is needed in order to use the full capacity of a-Bench. Execute:
 
 Assuming that have a clean installation of ubuntu 18.03, execute the following step one after another.
+## Install ABench directly and start Konfig A
 
+``` sh
+   wget https://raw.githubusercontent.com/FutureApp/a-bench/master/system_test/abench_prim_mods/test_install_on_new_machine.sh &&\
+   sudo bash test_install_on_new_machine.sh
+```
 ### Step 1 # Setup the enviroment
 
 ``` sh
