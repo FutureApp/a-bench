@@ -37,7 +37,7 @@ case  $var  in
 #---------------------------------------------------------------------[ ABench - Infrastructure ]--
 (senv_a) #                      -- Starts the framework-env in configuration A with Kubernetes and Minikube
     bench_preflight
-    numberCPUs=${2:-4}      # Sets default value 4 CPUs
+    numberCPUs=${2:-2}      # Sets default value 4 CPUs
     numberMemory=${3:-6144} # Sets default value 6144 MB
     numberDiskSizeGB="${4:-16}g"
     minikube delete 
@@ -218,18 +218,20 @@ case  $var  in
     kubectl delete  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     util_sleep 60
 
+
     kubectl apply   -f   ./dir_bench/images/influxdb-client/kubernetes/deploy_influxdb-client.yaml
     kubectl create  -f   ./dir_bench/images/influxdb-client/kubernetes/service_influxdb-client.yaml
     
     util_sleep 60
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
+
 ;;
 (dev_pcc) #                     -- Executes dev-related code for testing code-snipped's
-    ./$0 dev_code
+    #./$0 dev_code
     s_time=$(bench_UTC_TimestampInNanos)
-    util_sleep 10
+    util_sleep 100
     e_time=$(bench_UTC_TimestampInNanos)
-    
+    set -o xtrace
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
     url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 
@@ -238,7 +240,22 @@ case  $var  in
     curl "$url" --output $data_location
     echo "Data is saved under $data_location"
 ;;
+(d) #  -- hi
+function bench_installMissingComponents {  
+    echo -e "$bench_tag Try to install all missing components..."  
+    installLibrary=/dir_bench/lib_bench/shell/install  
+    for component in ${needComponents[*]}  
+    do  
+        if ! [ -x "$(command -v $component)" ]; then  
+            cur_home="$(pwd)"  
+            pathToInstallLib=$cur_home$installLibrary  
+            pathToInstallStruc="$pathToInstallLib/install_$component.sh"  
+            bash $pathToInstallStruc  
+        fi  
+    done  
+} 
 
+;;
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help) #                      -- Prints the help and usage message
     util_print_help
