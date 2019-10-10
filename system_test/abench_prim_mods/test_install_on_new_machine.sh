@@ -7,8 +7,8 @@ rm -fr ~/wd/abench;
 mkdir -p ~/wd/abench &&
 cd ./wd/abench &&
 git clone https://github.com/FutureApp/a-bench.git && \
-cd a-bench && bash admin.sh auto_install && \
-chmod +x admin.sh &&\
+cd a-bench && chmod +x admin.sh &&\
+bash admin.sh auto_install && \
 end_install=(date +%s) &&\
 bash admin.sh senv_a &&\
 end_run=(date +%s) &&\
