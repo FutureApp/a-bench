@@ -6,11 +6,8 @@ NC='\033[0m' # No Color
 
 # dep-locations
 exutils="../../utils/exutils.sh"
-
 # imports
 source $exutils
-
-
 bench_tag=${LB}[A-Bench]${NC}
 ex_tag="template_ex"
 path_to_mSRE_file="./mSRE_template/mSRE-definition-template.sh"
@@ -24,7 +21,7 @@ for var in "$1"
 do
 case  $var  in
 
-#--------------------------------------------------------------------------------------[ Experiment ]--
+#---------------------------------------------------------------------------------[ Experiment ]--
 (run_ex) #                  -- ProcFedure to run the experiment described by the steps below. 
     mSRE_iterations=${2:-1}
     echo -e "Experiment TAG: #$ex_tag"
@@ -32,7 +29,6 @@ case  $var  in
     ./$0 MRE_build
     ./$0 MRE_deploy
     ./$0 MRE_prepare
-
 
     home_framework=$(readlink -f "../../../..")
     pathToCollectDir=$(exutils_relResultDirPath $home_framework)
@@ -45,7 +41,7 @@ case  $var  in
     ./$0 MRE_clean
     ./$0 MRE_finish
 ;;
-#----------------------------------------------------------------------------[ Experiment-Functions ]--
+#-----------------------------------------------------------------------[ Experiment-Functions ]--
 (MRE_build) #               -- Procedure to build your kube infrastructure (docker). via custom script.
     echo -e "$bench_tag Deploying the infrastructure of the experiment.     | $RR MRE_build $NC"
 #    //TODO Your code comes here 
@@ -69,7 +65,6 @@ case  $var  in
         bash ./mSRE-definition-template.sh run_ex $pathDataToCollectTo $ex_tag-$counter $counter
         ((counter++))
         done
-  
 ;;
 (MRE_collect) #             -- Procedure to collect the results of the experiment.   via custom script.
     echo -e "$bench_tag Downloading the results of the experiment.          | $RR MRE_collect $NC"
@@ -78,7 +73,6 @@ case  $var  in
     experiment_end=$3
     exportDirectory=$4
     exportExperimentID=$5
-
 #    //TODO Your code comes here 
 ;;
 (MRE_clean) #               -- Procedure to clean up the enviroment if needed        via custom script.
@@ -89,7 +83,7 @@ case  $var  in
     echo -e "$bench_tag Experiment finished.                                | $RR MRE_finish $NC"
 #    //TODO Your code comes here 
 ;;
-#--------------------------------------------------------------------------------------------[ Help ]--
+#---------------------------------------------------------------------------------------[ Help ]--
 (--help|*) #                -- Prints the help and usage message
     exutils_dynmic_helpByCodeParse
 ;;
