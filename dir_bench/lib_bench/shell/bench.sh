@@ -6,10 +6,7 @@ NC='\033[0m' # No Color
 bench_tag=${LB}[A-Bench]${NC}
 MISSING_tag=${RR}Missing${NC}
 
-
 problemCounter=0
-
-
 needComponents=(git docker virtualbox minikube kubectl helm curl cat)
 
 # Verify if the specific command is executable. Based on the result, a specific message 
@@ -47,11 +44,9 @@ function bench_installMissingComponents {
     existendComponents=$((checkedComponents - newComponent))
     echo -e "$bench_tag $existendComponents/$checkedComponents programs are already installed. $newComponent new installed programs."
     echo -e "$bench_tag Please restart your computer to complete the process."
-
 }
 
 function finish_message {   
-
     echo ''
     echo ''
     echo ''
@@ -77,8 +72,6 @@ function finish_message {
 #
 function bench_preflight {
     echo -e "$bench_tag Preflight in progress..."
-
- 
     for component in ${needComponents[*]}
     do
       bench_preflightCheck $component
@@ -89,7 +82,6 @@ function bench_preflight {
         then
         exit 1
     fi
-
 }
 
 # Cratfts the service-information which you want do access.   
@@ -108,7 +100,6 @@ function bench_minikube_nodeExportedK8sService_IPxPORT {
                 awk '{print $6}' | awk -F ':|/' '{print $2}')"
     echo "$nodeIP:$servicePort"
 }
-
 
 function bench_UTC_TimestampInNanos {
     echo "$(date -u +%s%N)"
