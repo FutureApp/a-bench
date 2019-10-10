@@ -240,22 +240,7 @@ case  $var  in
     curl "$url" --output $data_location
     echo "Data is saved under $data_location"
 ;;
-(d) #  -- hi
-function bench_installMissingComponents {  
-    echo -e "$bench_tag Try to install all missing components..."  
-    installLibrary=/dir_bench/lib_bench/shell/install  
-    for component in ${needComponents[*]}  
-    do  
-        if ! [ -x "$(command -v $component)" ]; then  
-            cur_home="$(pwd)"  
-            pathToInstallLib=$cur_home$installLibrary  
-            pathToInstallStruc="$pathToInstallLib/install_$component.sh"  
-            bash $pathToInstallStruc  
-        fi  
-    done  
-} 
 
-;;
 #--------------------------------------------------------------------------------------------[ Help ]--
 (--help) #                      -- Prints the help and usage message
     util_print_help
