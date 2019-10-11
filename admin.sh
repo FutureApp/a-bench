@@ -30,12 +30,12 @@ for var in "$1"
 do
 case  $var  in
 #--------------------------------------------------------------------------------[ ABench - Presteps ]--
-(auto_install) #                -- Triggers all scripts to automatically install all necessary components
+(auto_install) #                -- Triggers all mechanism to install all req. components
     bench_installMissingComponents 
 ;;
 
 #---------------------------------------------------------------------[ ABench - Infrastructure ]--
-(senv_a) #                      -- Starts the framework-env in configuration A with Kubernetes and Minikube
+(senv_a) #                      -- Starts abench in config A with Kubernetes and Minikube
     bench_preflight
     numberCPUs=${2:-2}      # Sets default value 4 CPUs
     numberMemory=${3:-6144} # Sets default value 6144 MB
@@ -75,29 +75,43 @@ case  $var  in
                 """
 ;;
 
-(senv_b) #                      -- Starts the framework-env. in configuration B within a cloud-infrastructure - not supported -
+(senv_b) #                      -- Starts the framework-env. in config. B within a cloud-infrastructure - not supported -
     echo "The framework doesn't support the configuration B (cloud-env) right now."
 ;;
 
 #---------------------------------------------------------------------[ Live-Monitoring ]--
-(show_all_das) #                -- Open *-dashboards
+(show_all_das) #                -- Opens all *-dashboards
     ./$0 show_grafana_das &
     sleep 10;
     ./$0 show_kuber_das
 
 ;;
-(show_grafana_das) #            -- Open the Grafan-dashboard.
+(show_grafana_das) #            -- Opens the Grafan-dashboard.
     mini_ip=$(minikube ip)
     linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&refresh=10s"
     xdg-open $linkToDashboard
 ;;
-(show_kuber_das) #              -- Open the Kubernetes-dashboard
+(show_kuber_das) #              -- Opens the Kubernetes-dashboard
     minikube dashboard
 ;;
+#---------------------------------------------------------------------[ Export data ]--
 
+(export_data) #              -- Opens the Kubernetes-dashboard
+    echo "exporting data now"
+    s_time=$2
+    e_time=$3
+    location="$4"
+    echo "Input-parameter: $@"
+    ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
+    url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 
-#----------------------------------------------------------------------------------------[ Examples ]--
-(demo_from_scratch_sre) #       -- Deploys the (config A)-environment; Executes a single-run-experiment specification from the BBV2-Modul
+    echo "Calling the following URl <$url>"
+    curl $url --output $location
+    echo "Data(saved) location: $location"
+;;
+
+#--------------------------------------------------------------------------------[ Experiments ]--
+(demo_from_scratch_sre) #       -- Deploys abench (config A); Runs a single-run-experiment [BBV2-Modul]
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -113,7 +127,7 @@ case  $var  in
     ./$0 run_sample_sre_bbv
     url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
-(demo_from_scratch_mre) #       -- Deploys the (config A)-environment; Executes a multi-run-experiment specification from the BBV2-Modul
+(demo_from_scratch_mre) #       -- Deploys abench (config A); Runs a multi-run-experiment [BBV2-Modul]
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -242,7 +256,7 @@ case  $var  in
 
 ;;
 (dev_pcc) #                     -- Executes dev-related code for testing code-snipped's
-    #./$0 dev_code
+    ./$0 dev_code
     s_time=$(bench_UTC_TimestampInNanos)
     util_sleep 100
     e_time=$(bench_UTC_TimestampInNanos)
