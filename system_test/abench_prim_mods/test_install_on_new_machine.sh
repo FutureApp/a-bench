@@ -19,6 +19,7 @@ echo "Sleeping now 2 minutes" && sleep 250
 # Checks if all pods are available which are expected.
 # Based on
 # https://unix.stackexchange.com/questions/428614/take-output-from-grep-and-select-parts-for-variables
+echo "[Neue-Umgebung-Test] Test is detecting:"
 podList=(   etcd-minikube heapster influxdb-client influxdb-grafana kube-addon-manager-minikube 
             kube-apiserver-minikube kube-controller-manager-minikube kube-dns kube-proxy kube-scheduler-minikube
             kubernetes-dashboard storage-provisioner tiller-deploy )
