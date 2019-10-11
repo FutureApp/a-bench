@@ -15,7 +15,7 @@ bash admin.sh senv_a
 end_run=$SECONDS
 
 SECONDS=0
-echo "Sleeping now 2 minutes" && sleep 250
+echo "Sleeping 5 minutes" && sleep 250
 # Checks if all pods are available which are expected.
 # Based on
 # https://unix.stackexchange.com/questions/428614/take-output-from-grep-and-select-parts-for-variables
@@ -37,17 +37,16 @@ do
 done
 
 realEnd=$SECONDS
-finalEnd=countFailur=$((end_install+end_run+realEnd))
-echo "Time spend (installing):   $end_install"
-echo "Time spend (initializing): $end_run"
-echo "Time spend (total): $finalEnd"
+finalEnd=$((end_install+end_run+realEnd))
+countFailur=0
+echo "Time spend (installing):   $end_install s"
+echo "Time spend (initializing): $end_run s"
+echo "Time spend (total(install+init+waiting)): $finalEnd s"
 
 if [ "$countFailur" -eq "0" ]; then
    echo "Test successfully";
-   echo "Total execution time: $total_runtime s | Install time: $install_runtime"
    exit;
 else
     echo "Error, test failed";
-    echo "Total execution time: $total_runtime s | Install time: $install_runtime"
     exit 1;
 fi
