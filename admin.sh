@@ -174,7 +174,21 @@ case  $var  in
     cd bigbenchv2 && git pull
     echo "Download has finished [bbv2-modul]"
 ;;
-
+#------------------------------------------------------------------------------------[ Mod_ENV ]--
+(start_bbv_hive) #             -- Starts a minimal hive-experiment-infrastructure [BBV2]
+    ./$0 down_bbv_two
+    cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
+    bash ENV_experiment_demoHIVE.sh cus_build
+    bash ENV_experiment_demoHIVE.sh cus_deploy
+    echo "Hive-ENV deployed"
+;;
+(start_bbv_spark) #             -- Starts a minimal spark-experiment-infrastructure [BBV2]
+    ./$0 down_bbv_two
+    cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
+    bash ENV_experiment_demoSPARK.sh cus_build
+    bash ENV_experiment_demoSPARK.sh cus_deploy
+    echo "Spark-ENV deployed"
+;;
 #----------------------------------------------------------------------------------[ Custom - Runners ]--
 (run_sample_sre_bbv) #          -- Executes the SRE_experiment_demoHIVE.sh experiment from bigbenchv2
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
