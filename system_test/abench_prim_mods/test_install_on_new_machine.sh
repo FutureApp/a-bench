@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Installationsprozess der ABench - Infrastruktur. Neue Umgebung-Test" &&\
-start=$(date +%s)
+SECONDS=0
 sudo apt-get update
 sudo apt-get install -y git
 rm -fr ~/wd/abench
@@ -9,13 +9,13 @@ cd ./wd/abench
 git clone https://github.com/FutureApp/a-bench.git
 cd a-bench && chmod +x admin.sh
 bash admin.sh auto_install
-end_install=(date +%s)
+end_install=$SECONDS
+SECONDS=0
 bash admin.sh senv_a
-end_run=(date +%s)
-install_runtime=$((end_install-start))
-total_runtime=$((end_run-start))
+end_run=$SECONDS
 
 
+echo "Sleeping now 2 minutes" && sleep 120
 # Checks if all pods are available which are expected.
 # Based on
 # https://unix.stackexchange.com/questions/428614/take-output-from-grep-and-select-parts-for-variables
@@ -35,6 +35,9 @@ do
     fi
 done
 
+
+echo "Time spend (installing):   $end_install"
+echo "Time spend (initializing): $end_run"
 if [ "$countFailur" -eq "0" ]; then
    echo "Test successfully";
    echo "Total execution time: $total_runtime s | Install time: $install_runtime"
