@@ -79,6 +79,21 @@ case  $var  in
     echo "The framework doesn't support the configuration B (cloud-env) right now."
 ;;
 
+#---------------------------------------------------------------------[ Live-Monitoring ]--
+(show_all_das) #                -- Open *-dashboards
+    ./$0 show_grafana_das &
+    sleep 10;
+    ./$0 show_kuber_das
+
+;;
+(show_grafana_das) #            -- Open the Grafan-dashboard.
+    mini_ip=$(minikube ip)
+    linkToDashboard="http://$(minikube ip):30002/dashboard/db/pods?orgId=1&var-namespace=kube-system&var-podname=etcd-minikube&from=now-15m&to=now&refresh=10s"
+    xdg-open $linkToDashboard
+;;
+(show_kuber_das) #              -- Open the Kubernetes-dashboard
+    minikube dashboard
+;;
 
 
 #----------------------------------------------------------------------------------------[ Examples ]--
