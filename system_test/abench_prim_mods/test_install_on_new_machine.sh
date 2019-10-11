@@ -15,7 +15,7 @@ bash admin.sh senv_a
 end_run=$SECONDS
 
 SECONDS=0
-echo "Sleeping 5 minutes" && sleep 250
+echo "Sleeping 5 minutes" && sleep 300
 # Checks if all pods are available which are expected.
 # Based on
 # https://unix.stackexchange.com/questions/428614/take-output-from-grep-and-select-parts-for-variables
