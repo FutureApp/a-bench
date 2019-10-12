@@ -40,6 +40,9 @@ done
 chown -R $SUDO_USER ~/wd
 chmod -R u+rX ~/wd
 
+chown -R $SUDO_USER /home/$SUDO_USER
+chmod -R u+rX /home/$SUDO_USER
+
 realEnd=$SECONDS
 finalEnd=$((end_install+end_run+realEnd))
 countFailur=0
