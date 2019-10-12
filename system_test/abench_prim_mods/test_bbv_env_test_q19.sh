@@ -10,8 +10,8 @@ SECONDS=0
 cd ~/wd/abench/a-bench
 rm -rf ~/wd/abench/a-bench/tempwrite
 mkdir -p ~/wd/abench/a-bench/tempwrite
-$filePathLog_Hive="~/wd/abench/a-bench/tempwrite/q19_hive.log"
-$filePathLog_Spark="~/wd/abench/a-bench/tempwrite/q19_spark.log"
+filePathLog_Hive="~/wd/abench/a-bench/tempwrite/q19_hive.log"
+filePathLog_Spark="~/wd/abench/a-bench/tempwrite/q19_spark.log"
 echo "starting abench-infrastructur"
 bash admin.sh senv_a
 echo "starting abench-experiment-infrastructur"
@@ -21,7 +21,7 @@ countFailur=0
 export TEST_QUERIES="q19"
 export EX_TAG="hive_q19_test"
 echo "Running now"
-bash ./admin.sh run_by_env_bbv_hive |& tee $filePathLog_Hive
+bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
 
 #Check if out contains expected counts.
 searchString=""
@@ -36,7 +36,7 @@ fi
 
 export TEST_QUERIES="q19" &&\
 export EX_TAG="spark_q19_test" &&\
-bash ./admin.sh run_by_env_bbv_spark | tee > $filePathLog_Hive
+bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
 
 #Check if out contains expected counts.
 searchString=""

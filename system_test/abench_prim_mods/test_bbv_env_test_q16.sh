@@ -10,8 +10,8 @@ SECONDS=0
 cd ~/wd/abench/a-bench
 rm -rf ~/wd/abench/a-bench/tempwrite
 mkdir -p ~/wd/abench/a-bench/tempwrite
-$filePathLog_Hive="~/wd/abench/a-bench/tempwrite/q16_hive.log"
-$filePathLog_Spark="~/wd/abench/a-bench/tempwrite/q16_spark.log"
+filePathLog_Hive="~/wd/abench/a-bench/tempwrite/q16_hive.log"
+filePathLog_Spark="~/wd/abench/a-bench/tempwrite/q16_spark.log"
 echo "starting abench-infrastructur"
 bash admin.sh senv_a
 echo "starting abench-experiment-infrastructur"
