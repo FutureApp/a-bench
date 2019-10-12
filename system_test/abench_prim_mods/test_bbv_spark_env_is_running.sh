@@ -10,7 +10,6 @@ SECONDS=0
 cd ~/wd/abench/a-bench
 echo "starting abench-infrastructur"
 bash admin.sh senv_a
-echo "Sleeping 3 minutes" && sleep 180
 echo "starting abench-experiment-infrastructur spark"
 bash admin.sh start_bbv_spark
 echo "[Spark-Umgebung-Test] Test is detecting:"
