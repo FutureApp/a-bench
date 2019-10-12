@@ -23,27 +23,11 @@ export EX_TAG="hive_q16_test" &&\
 bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
 
 #Check if out contains expected counts.
-searchString=""
-if grep -q $searchString $filePathLog_Hive; then
-    echo "Found search-string (in hive): $searchString"
-else
-    echo "Could not found search-string (in hive): $searchString"
-    ((countFailur++))
-fi
 
+echo "Checks the execution of q16 on hive. Q16-spark-Run-Test"
 export TEST_QUERIES="q16" &&\
 export EX_TAG="spark_q16_test" &&\
 bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
-
-#Check if out contains expected counts.
-searchString=""
-if grep -q $searchString $filePathLog_Spark; then
-    echo "Found search-string (in spark): $searchString"
-else
-    echo "Could not found search-string (in spark): $searchString"
-    ((countFailur++))
-fi
-
 
 if [ "$countFailur" -eq "0" ]; then
    echo "Test successfully";
