@@ -96,7 +96,7 @@ case  $var  in
 ;;
 #---------------------------------------------------------------------[ Export data ]--
 
-(export_data) #              -- Opens the Kubernetes-dashboard
+(export_data) #                 -- Exports measurments. In1: sTime; In2: eTime; In3:location
     echo "exporting data now"
     s_time=$2
     e_time=$3

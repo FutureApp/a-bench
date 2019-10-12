@@ -11,13 +11,13 @@ cd ~/wd/abench/a-bench
 echo "starting abench-infrastructur"
 bash admin.sh senv_a
 echo "Sleeping 3 minutes" && sleep 180
-echo "starting abench-experiment-infrastructur HIVE"
-bash admin.sh start_bbv_hive
-echo "[Hive-Umgebung-Test] Test is detecting:"
+echo "starting abench-experiment-infrastructur spark"
+bash admin.sh start_bbv_spark
+echo "[Spark-Umgebung-Test] Test is detecting:"
 
 podList=(   thadoop-hadoop-bench-driver thadoop-hadoop-hdfs-dn thadoop-hadoop-hdfs-nn 
             thadoop-hadoop-thrift-server thadoop-hadoop-yarn-nm-0 thadoop-hadoop-yarn-nm-1 
-            thadoop-hadoop-yarn-rm-0 thadoop-mysql)
+            thadoop-hadoop-yarn-rm-0 thadoop-hadoop-spark-master thadoop-hadoop-spark-worker-0 thadoop-mysql)
 searchWord="Running"
 countFailur=0
 for pod in "${podList[@]}"
@@ -27,7 +27,7 @@ do
         echo "[x] $pod is runnning."
     else
         echo "[ ] $pod is not runnning."
-        countFailur=$((var+1))
+        ((countFailur++))
     fi
 done
 
