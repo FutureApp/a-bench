@@ -36,6 +36,10 @@ do
     fi
 done
 
+
+chown -R $SUDO_USER ~/wd
+chmod -R u+rX ~/wd
+
 realEnd=$SECONDS
 finalEnd=$((end_install+end_run+realEnd))
 countFailur=0

@@ -43,7 +43,7 @@ searchString=""
 if grep -q $searchString $filePathLog_Spark; then
     echo "Found search-string (in spark): $searchString"
 else
-    echo "Could not found search-string (in soark): $searchString"
+    echo "Could not found search-string (in spark): $searchString"
     ((countFailur++)
 fi
 
