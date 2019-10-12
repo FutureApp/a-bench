@@ -31,8 +31,6 @@ else
     ((countFailur++))
 fi
 
-
-
 export TEST_QUERIES="q16" &&\
 export EX_TAG="spark_q16_test" &&\
 bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark

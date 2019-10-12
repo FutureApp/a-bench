@@ -18,9 +18,10 @@ echo "starting abench-experiment-infrastructur"
 
 countFailur=0
 
-export TEST_QUERIES="q19" &&\
-export EX_TAG="hive_q19_test" &&\
-bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
+export TEST_QUERIES="q19"
+export EX_TAG="hive_q19_test"
+echo "Running now"
+bash ./admin.sh run_by_env_bbv_hive |& tee $filePathLog_Hive
 
 #Check if out contains expected counts.
 searchString=""
@@ -35,7 +36,7 @@ fi
 
 export TEST_QUERIES="q19" &&\
 export EX_TAG="spark_q19_test" &&\
-bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
+bash ./admin.sh run_by_env_bbv_spark | tee > $filePathLog_Hive
 
 #Check if out contains expected counts.
 searchString=""
