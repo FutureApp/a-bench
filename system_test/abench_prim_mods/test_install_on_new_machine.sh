@@ -11,6 +11,7 @@ cd a-bench && chmod +x admin.sh
 bash admin.sh auto_install
 end_install=$SECONDS
 SECONDS=0
+bash admin.sh down_submodules
 bash admin.sh senv_a
 end_run=$SECONDS
 
