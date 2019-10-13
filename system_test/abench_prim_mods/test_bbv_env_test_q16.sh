@@ -10,24 +10,43 @@ SECONDS=0
 cd ~/wd/abench/a-bench
 rm -rf ~/wd/abench/a-bench/tempwrite
 mkdir -p ~/wd/abench/a-bench/tempwrite
-filePathLog_Hive="~/wd/abench/a-bench/tempwrite/q16_hive.log"
-filePathLog_Spark="~/wd/abench/a-bench/tempwrite/q16_spark.log"
+filePathLog_Hive=~/wd/abench/a-bench/tempwrite/q16_hive.log
+filePathLog_Spark=~/wd/abench/a-bench/tempwrite/q16_spark.log
 echo "starting abench-infrastructur"
 bash admin.sh senv_a
 echo "starting abench-experiment-infrastructur"
 
 countFailur=0
 
-export TEST_QUERIES="q16" &&\
-export EX_TAG="hive_q16_test" &&\
+curLoc=$(pwd)
+echo "Current loc. $curLoc"
+export TEST_QUERIES="q16"
+export EX_TAG="hive_q16_test"
 bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
 
-#Check if out contains expected counts.
+echo "Test on Hive-results"
+sString="Database does notssdasdasd"
+if grep -q "$sString" "$filePathLog_Hive"; then
+    echo "Find the calc results. [HIVE]"
+else
+    echo "Didn't find the calc results. [HIVE]"
+    ((countFailur++))
+fi
 
+#Check if out. contains expected counts.
 echo "Checks the execution of q16 on hive. Q16-spark-Run-Test"
 export TEST_QUERIES="q16" &&\
 export EX_TAG="spark_q16_test" &&\
 bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
+
+echo "Test on spark-results"
+sString="Database does notssdasdasd"
+if grep -q "$sString" "$filePathLog_Hive"; then
+    echo "Find the calc results. [HIVE]"
+else
+    echo "Didn't find the calc results. [HIVE]"
+    ((countFailur++))
+fi
 
 if [ "$countFailur" -eq "0" ]; then
    echo "Test successfully";
