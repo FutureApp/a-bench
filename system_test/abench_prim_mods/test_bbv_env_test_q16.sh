@@ -18,33 +18,43 @@ echo "starting abench-experiment-infrastructur"
 
 countFailur=0
 
-curLoc=$(pwd)
-echo "Current loc. $curLoc"
+# -------------------------------------------------------------------------------------[HVIE]
+sleep 45
 export TEST_QUERIES="q16"
 export EX_TAG="hive_q16_test"
 bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
 
 echo "Test on Hive-results"
-sString="Database does notssdasdasd"
-if grep -q "$sString" "$filePathLog_Hive"; then
+sStringCals="webpage#00	1895"
+sStringFetch="seconds, Fetched 10 row"
+if grep -q "$sStringCals" "$filePathLog_Hive"; then
     echo "Find the calc results. [HIVE]"
 else
     echo "Didn't find the calc results. [HIVE]"
     ((countFailur++))
 fi
 
+# -------------------------------------------------------------------------------------[Spark]
 #Check if out. contains expected counts.
 echo "Checks the execution of q16 on hive. Q16-spark-Run-Test"
-export TEST_QUERIES="q16" &&\
-export EX_TAG="spark_q16_test" &&\
+export TEST_QUERIES="q16"
+export EX_TAG="spark_q16_test"
 bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
 
 echo "Test on spark-results"
-sString="Database does notssdasdasd"
-if grep -q "$sString" "$filePathLog_Hive"; then
-    echo "Find the calc results. [HIVE]"
+sStringCals="webpage#00	1895"
+sStringFetch="seconds, Fetched 10 row"
+if grep -q "$sStringCals" "$filePathLog_Spark"; then
+    echo "Find the calc results. [SPARK]"
 else
-    echo "Didn't find the calc results. [HIVE]"
+    echo "Didn't find the calc results. [SPARK]"
+    ((countFailur++))
+fi
+
+if grep -q "$sStringFetch" "$filePathLog_Spark"; then
+    echo "Find the calc results. [SPARK]"
+else
+    echo "Didn't find the calc results. [SPARK]"
     ((countFailur++))
 fi
 
