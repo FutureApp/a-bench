@@ -18,7 +18,7 @@ echo "starting abench-experiment-infrastructur"
 
 countFailur=0
 
-# -------------------------------------------------------------------------------------[HVIE]
+# ----------------------------------------------c---------------------------------------[HVIE]
 sleep 45
 export TEST_QUERIES="q16"
 export EX_TAG="hive_q16_test"
@@ -33,7 +33,7 @@ else
     echo "Didn't find the calc results. [HIVE]"
     ((countFailur++))
 fi
-exit
+
 # -------------------------------------------------------------------------------------[Spark]
 #Check if out. contains expected counts.
 echo "Checks the execution of q16 on hive. Q16-spark-Run-Test"
