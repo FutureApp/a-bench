@@ -11,9 +11,17 @@ cd a-bench && chmod +x admin.sh
 bash admin.sh auto_install
 end_install=$SECONDS
 SECONDS=0
-bash admin.sh down_submodules
-bash admin.sh senv_a
+sudo -u "$SUDO_USER" bash admin.sh down_submodules
+
+chown -R $SUDO_USER ~/wd
+chmod -R u+rX ~/wd
+
+chown -R $SUDO_USER /home/$SUDO_USER
+chmod -R u+rX /home/$SUDO_USER
+
+sudo -u "$SUDO_USER" bash admin.sh senv_a
 end_run=$SECONDS
+
 
 SECONDS=0
 echo "Sleeping 5 minutes" && sleep 300
@@ -38,11 +46,6 @@ do
 done
 
 
-chown -R $SUDO_USER ~/wd
-chmod -R u+rX ~/wd
-
-chown -R $SUDO_USER /home/$SUDO_USER
-chmod -R u+rX /home/$SUDO_USER
 
 realEnd=$SECONDS
 finalEnd=$((end_install+end_run+realEnd))
