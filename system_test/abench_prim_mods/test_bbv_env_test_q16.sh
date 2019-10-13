@@ -19,20 +19,19 @@ echo "starting abench-experiment-infrastructur"
 countFailur=0
 
 # ----------------------------------------------c---------------------------------------[HIVE]
-# sleep 60
-# export TEST_QUERIES="q16"
-# export EX_TAG="hive_q16_test"
-# bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
-
-# echo "Test on Hive-results"
-# sStringCals="webpage#00	1895"
-# sStringFetch="seconds, Fetched 10 row"
-# if grep -q "$sStringCals" "$filePathLog_Hive"; then
-#     echo "Find the calc results. [HIVE]"
-# else
-#     echo "Didn't find the calc results. [HIVE]"
-#     ((countFailur++))
-# fi
+sleep 60
+export TEST_QUERIES="q16"
+export EX_TAG="hive_q16_test"
+bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
+echo "Test on Hive-results"
+sStringCals="webpage#00	1895"
+sStringFetch="seconds, Fetched 10 row"
+if grep -q "$sStringCals" "$filePathLog_Hive"; then
+    echo "Find the calc results. [HIVE]"
+else
+    echo "Didn't find the calc results. [HIVE]"
+    ((countFailur++))
+fi
 
 # -------------------------------------------------------------------------------------[Spark]
 #Check if out. contains expected counts.
