@@ -18,7 +18,7 @@ echo "starting abench-experiment-infrastructur"
 
 countFailur=0
 
-# ----------------------------------------------c---------------------------------------[HVIE]
+# ----------------------------------------------c---------------------------------------[HIVE]
 # sleep 60
 # export TEST_QUERIES="q16"
 # export EX_TAG="hive_q16_test"
@@ -37,6 +37,7 @@ countFailur=0
 # -------------------------------------------------------------------------------------[Spark]
 #Check if out. contains expected counts.
 echo "Checks the execution of q16 on hive. Q16-spark-Run-Test"
+echo "sleeping 160s now" && sleep 160
 export TEST_QUERIES="q16"
 export EX_TAG="spark_q16_test"
 bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
