@@ -103,6 +103,7 @@ case  $var  in
     location="$4"
     echo "Input-parameter: $@"
     ipxport_data_client=$(bench_minikube_nodeExportedK8sService_IPxPORT influxdb-client)
+    echo "minikube detected: $ipxport_data_client"
     url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 
     echo "Calling the following URl <$url>"
