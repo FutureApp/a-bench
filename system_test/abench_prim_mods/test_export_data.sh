@@ -14,7 +14,7 @@ cd $adminModul_location
 mkdir -p $locationPath
 rm $exportFilePath
 rm -r "./results/test-data-export"
-#bash ./admin.sh senv_a
+bash ./admin.sh senv_a
 #echo "sleeping 5 minutes" && sleep 300
 
 expectedNumberOfFiles=36
