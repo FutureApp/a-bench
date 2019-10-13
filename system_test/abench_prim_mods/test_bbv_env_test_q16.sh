@@ -33,7 +33,7 @@ else
     echo "Didn't find the calc results. [HIVE]"
     ((countFailur++))
 fi
-
+exit
 # -------------------------------------------------------------------------------------[Spark]
 #Check if out. contains expected counts.
 echo "Checks the execution of q16 on hive. Q16-spark-Run-Test"

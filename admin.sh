@@ -143,7 +143,7 @@ case  $var  in
     ./$0 run_sample_mre_bbv
     #url="http://$ipxport_data_client/csv-zip?host=monitoring-influxdb&port=8086&dbname=k8s&filename=experi01&fromT=$s_time&toT=$e_time"
 ;;
-(demo_from_scratch_env) #       -- Deploys the (config A)-environment; Executes an env-run-experiment specification from the BBV2-Modul
+(demo_from_scratch_env) #       -- Deploys abench (config A); Runs an env-run-experiment [BBV2-Modul]
     ./$0 senv_a
     sleep 15
     mini_ip=$(minikube ip)
@@ -175,7 +175,7 @@ case  $var  in
     echo "Download has finished [bbv2-modul]"
 ;;
 #------------------------------------------------------------------------------------[ Mod_ENV ]--
-(start_bbv_hive) #             -- Starts a minimal hive-experiment-infrastructure [BBV2]
+(start_bbv_hive) #              -- Starts a minimal hive-experiment-infrastructure [BBV2]
     ./$0 down_bbv_two
     cd submodules/bigbenchv2/a-bench_connector/experiments/env-run-experiment/
     bash ENV_experiment_demoHIVE.sh cus_build
@@ -190,21 +190,21 @@ case  $var  in
     echo "Spark-ENV deployed"
 ;;
 #----------------------------------------------------------------------------------[ Custom - Runners ]--
-(run_sample_sre_bbv) #          -- Executes the SRE_experiment_demoHIVE.sh experiment from bigbenchv2
+(run_sample_sre_bbv) #          -- Executes the SRE_experiment_demoHIVE.sh experiment in [BBV2]
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
     bash SRE_experiment_demoHIVE.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
-(run_sample_mre_bbv) #          -- Executes the MRE_experiment_demoHIVE.sh experiment from bigbenchv2 2xtimes
+(run_sample_mre_bbv) #          -- Executes the MRE_experiment_demoHIVE.sh experiment in [BBV2] 2 x times
     cd submodules/bigbenchv2/a-bench_connector/experiments/multi-run-experiment/
     bash MRE_experiment_demoHIVE.sh run_ex 2 # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
-(run_sample_sre_spark) #        -- Executes the SRE_experiment_demoSPARK.sh experiment from bigbenchv2
+(run_sample_sre_spark) #        -- Executes the SRE_experiment_demoSPARK.sh experiment in [BBV2]
     cd submodules/bigbenchv2/a-bench_connector/experiments/single-run-experiment/
     bash SRE_experiment_demoSPARK.sh run_ex # Contains the implementation of the experiment. Like build,deploy and execution orders.
 ;;
 #----------------------------------------------------------------------------------------[ API - ENV-Ex ]--
 
-(run_by_env_bbv_hive) #         -- Performs a series of experiments using the bbv2-module +HIVE Enviroment+
+(run_by_env_bbv_hive) #         -- Uses the ENV- Experiments in [BBV2] for Hive
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
     if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
         echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
@@ -218,7 +218,7 @@ case  $var  in
     fi
     cd -
 ;;
-(run_by_env_bbv_spark) #        -- Performs a series of experiments using the bbv2-module +SPARK Enviroment+
+(run_by_env_bbv_spark) #        -- Uses the ENV- Experiments in [BBV2] for SPARk
     TEST_QUERIES_TO_CALL=($TEST_QUERIES)
     if [ -z "$TEST_QUERIES_TO_CALL" ] ; then
         echo "Attention. No queries detected. Check the System-ENV > TEST_QUERIES"
