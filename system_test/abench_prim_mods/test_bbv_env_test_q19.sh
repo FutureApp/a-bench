@@ -10,27 +10,53 @@ SECONDS=0
 cd ~/wd/abench/a-bench
 rm -rf ~/wd/abench/a-bench/tempwrite
 mkdir -p ~/wd/abench/a-bench/tempwrite
-filePathLog_Hive="~/wd/abench/a-bench/tempwrite/q19_hive.log"
-filePathLog_Spark="~/wd/abench/a-bench/tempwrite/q19_spark.log"
+filePathLog_Hive=~/wd/abench/a-bench/tempwrite/q19_hive.log
+filePathLog_Spark=~/wd/abench/a-bench/tempwrite/q19_spark.log
 echo "starting abench-infrastructur"
-# bash admin.sh senv_a
+bash admin.sh senv_a
 echo "starting abench-experiment-infrastructur"
 
 countFailur=0
 
+# ----------------------------------------------c---------------------------------------[HIVE]
+sleep 60
 export TEST_QUERIES="q19"
 export EX_TAG="hive_q19_test"
-#echo "Running now hive-ex. Check $filePathLog_Hive"
-#bash ./admin.sh run_by_env_bbv_hive > tee $filePathLog_Hive
+bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
+echo "Test on Hive-results"
+sStringCals="3       11      2013    2"
+sStringFetch="seconds, Fetched 10 row"
+if grep -q "$sStringCals" "$filePathLog_Hive"; then
+    echo "Find the calc results. [HIVE]"
+else
+    echo "Didn't find the calc results. [HIVE]"
+    ((countFailur++))
+fi
 
-#Check if out contains expected counts.
-
-echo "Checks the execution of q19 on hive. q19-Spark-Run-Test"
+# -------------------------------------------------------------------------------------[Spark]
+#Check if out. contains expected counts.
+echo "Checks the execution of q19 on hive. q19-spark-Run-Test"
+echo "sleeping 160s now" && sleep 160
 export TEST_QUERIES="q19"
 export EX_TAG="spark_q19_test"
-bash ./admin.sh run_by_env_bbv_spark
+bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
 
+echo "Test on spark-results"
+sStringCals="3       11      2013    2"
+sStringFetch="seconds, Fetched 10 row"
+if grep -q "$sStringCals" "$filePathLog_Spark"; then
+    echo "Find the calc results. [SPARK]"
+else
+    echo "Didn't find the calc results. [SPARK]"
+    ((countFailur++))
+fi
 
+if grep -q "$sStringFetch" "$filePathLog_Spark"; then
+    echo "Find the calc results. [SPARK]"
+else
+    echo "Didn't find the calc results. [SPARK]"
+    ((countFailur++))
+fi
 
 if [ "$countFailur" -eq "0" ]; then
    echo "Test successfully";
