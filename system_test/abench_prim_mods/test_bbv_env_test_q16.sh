@@ -45,14 +45,14 @@ echo "Test on spark-results"
 sStringCals="webpage#00	1895"
 sStringFetch="seconds, Fetched 10 row"
 if grep -q "$sStringCals" "$filePathLog_Spark"; then
-    echo "Find the calc results. [SPARK]"
+    echo "Found the calc results. [SPARK]"
 else
     echo "Didn't find the calc results. [SPARK]"
     ((countFailur++))
 fi
 
 if grep -q "$sStringFetch" "$filePathLog_Spark"; then
-    echo "Find the calc results. [SPARK]"
+    echo "Found the calc results. [SPARK]"
 else
     echo "Didn't find the calc results. [SPARK]"
     ((countFailur++))
