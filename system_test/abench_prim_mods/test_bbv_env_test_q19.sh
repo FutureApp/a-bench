@@ -24,6 +24,7 @@ export TEST_QUERIES="q19"
 export EX_TAG="hive_q19_test"
 bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
 echo "Test on Hive-results"
+
 sStringCals="3       11      2013    2"
 sStringFetch="seconds, Fetched 10 row"
 if grep -q "$sStringCals" "$filePathLog_Hive"; then
@@ -43,7 +44,6 @@ bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
 
 echo "Test on spark-results"
 sStringCals="3       11      2013    2"
-sStringFetch="seconds, Fetched 10 row"
 if grep -q "$sStringCals" "$filePathLog_Spark"; then
     echo "Find the calc results. [SPARK]"
 else
@@ -51,12 +51,6 @@ else
     ((countFailur++))
 fi
 
-if grep -q "$sStringFetch" "$filePathLog_Spark"; then
-    echo "Find the calc results. [SPARK]"
-else
-    echo "Didn't find the calc results. [SPARK]"
-    ((countFailur++))
-fi
 
 if [ "$countFailur" -eq "0" ]; then
    echo "Test successfully";
