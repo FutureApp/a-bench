@@ -43,7 +43,7 @@ export EX_TAG="spark_q19_test"
 bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
 
 echo "Test on spark-results"
-sStringCals="Fetched: 10 row(s)"
+sStringCals="Fetched 10 row"
 if grep -q "$sStringCals" "$filePathLog_Spark"; then
     echo "Found the calc results. [SPARK]"
 else
