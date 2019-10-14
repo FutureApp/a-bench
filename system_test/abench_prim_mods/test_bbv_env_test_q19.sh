@@ -25,7 +25,7 @@ export EX_TAG="hive_q19_test"
 bash ./admin.sh run_by_env_bbv_hive | tee $filePathLog_Hive
 echo "Test on Hive-results"
 
-sStringCals="3       11      2013    2"
+sStringCals="Fetched: 10 row(s)"
 sStringFetch="seconds, Fetched 10 row"
 if grep -q "$sStringCals" "$filePathLog_Hive"; then
     echo "Find the calc results. [HIVE]"
@@ -43,7 +43,7 @@ export EX_TAG="spark_q19_test"
 bash ./admin.sh run_by_env_bbv_spark | tee $filePathLog_Spark
 
 echo "Test on spark-results"
-sStringCals="3       11      2013    2"
+sStringCals="Fetched: 10 row(s)"
 if grep -q "$sStringCals" "$filePathLog_Spark"; then
     echo "Find the calc results. [SPARK]"
 else
